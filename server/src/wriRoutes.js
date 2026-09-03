@@ -965,4 +965,403 @@ router.delete("/admin/resources/:id", async (req, res) => {
   }
 });
 
+// Lead Status Management
+router.get("/admin/lead-status", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT ls.*, b.name as business_name, b.company as company_name
+      FROM wri_lead_status ls
+      JOIN wri_businesses b ON ls.business_id = b.id
+      ORDER BY ls.next_follow_up_date ASC NULLS LAST, ls.updated_at DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching lead status:", error);
+    res.status(500).json({ error: "Failed to fetch lead status" });
+  }
+});
+
+router.get("/admin/lead-status/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const result = await pool.query("SELECT * FROM wri_lead_status WHERE business_id = $1", [businessId]);
+    if (result.rows.length === 0) {
+      // Create default lead status if doesn't exist
+      const newStatus = await pool.query(
+        "INSERT INTO wri_lead_status (business_id, status) VALUES ($1, 'new') RETURNING *",
+        [businessId]
+      );
+      res.json(newStatus.rows[0]);
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching lead status:", error);
+    res.status(500).json({ error: "Failed to fetch lead status" });
+  }
+});
+
+router.put("/admin/lead-status/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const { status, last_contact_date, next_follow_up_date, notes, assigned_to } = req.body;
+
+    const result = await pool.query(
+      `UPDATE wri_lead_status 
+       SET status = $1, last_contact_date = $2, next_follow_up_date = $3, notes = $4, assigned_to = $5, updated_at = CURRENT_TIMESTAMP
+       WHERE business_id = $6
+       RETURNING *`,
+      [status, last_contact_date, next_follow_up_date, notes, assigned_to, businessId]
+    );
+
+    if (result.rows.length === 0) {
+      // Create if doesn't exist
+      const newStatus = await pool.query(
+        `INSERT INTO wri_lead_status (business_id, status, last_contact_date, next_follow_up_date, notes, assigned_to)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [businessId, status, last_contact_date, next_follow_up_date, notes, assigned_to]
+      );
+      res.json(newStatus.rows[0]);
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error("Error updating lead status:", error);
+    res.status(500).json({ error: "Failed to update lead status" });
+  }
+});
+
+// Lead Activities
+router.get("/admin/lead-activities/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const result = await pool.query(
+      "SELECT * FROM wri_lead_activities WHERE business_id = $1 ORDER BY created_at DESC",
+      [businessId]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching lead activities:", error);
+    res.status(500).json({ error: "Failed to fetch lead activities" });
+  }
+});
+
+router.post("/admin/lead-activities", async (req, res) => {
+  try {
+    const { business_id, activity_type, description, performed_by, outcome } = req.body;
+
+    if (!business_id || !activity_type || !description) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO wri_lead_activities (business_id, activity_type, description, performed_by, outcome)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [business_id, activity_type, description, performed_by || "", outcome || ""]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error creating lead activity:", error);
+    res.status(500).json({ error: "Failed to create lead activity" });
+  }
+});
+
+// Lead Scoring
+router.get("/admin/lead-scores", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT ls.*, b.name as business_name, b.company as company_name
+      FROM wri_lead_scores ls
+      JOIN wri_businesses b ON ls.business_id = b.id
+      ORDER BY ls.total_score DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching lead scores:", error);
+    res.status(500).json({ error: "Failed to fetch lead scores" });
+  }
+});
+
+router.get("/admin/lead-scores/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const result = await pool.query("SELECT * FROM wri_lead_scores WHERE business_id = $1", [businessId]);
+    if (result.rows.length === 0) {
+      // Calculate and create score if doesn't exist
+      const score = await calculateLeadScore(businessId);
+      res.json(score);
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching lead score:", error);
+    res.status(500).json({ error: "Failed to fetch lead score" });
+  }
+});
+
+router.post("/admin/lead-scores/recalculate/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const score = await calculateLeadScore(businessId);
+    res.json(score);
+  } catch (error) {
+    console.error("Error recalculating lead score:", error);
+    res.status(500).json({ error: "Failed to recalculate lead score" });
+  }
+});
+
+// Match Recommendations
+router.get("/admin/match-recommendations", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT mr.*, 
+             b1.name as business_name_1, b1.company as company_name_1,
+             b2.name as business_name_2, b2.company as company_name_2
+      FROM wri_match_recommendations mr
+      JOIN wri_businesses b1 ON mr.business_id_1 = b1.id
+      JOIN wri_businesses b2 ON mr.business_id_2 = b2.id
+      ORDER BY mr.match_score DESC
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching match recommendations:", error);
+    res.status(500).json({ error: "Failed to fetch match recommendations" });
+  }
+});
+
+router.get("/admin/match-recommendations/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const result = await pool.query(`
+      SELECT mr.*, 
+             b1.name as business_name_1, b1.company as company_name_1,
+             b2.name as business_name_2, b2.company as company_name_2
+      FROM wri_match_recommendations mr
+      JOIN wri_businesses b1 ON mr.business_id_1 = b1.id
+      JOIN wri_businesses b2 ON mr.business_id_2 = b2.id
+      WHERE mr.business_id_1 = $1 OR mr.business_id_2 = $1
+      ORDER BY mr.match_score DESC
+    `, [businessId]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching match recommendations:", error);
+    res.status(500).json({ error: "Failed to fetch match recommendations" });
+  }
+});
+
+router.post("/admin/match-recommendations/generate/:businessId", async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const recommendations = await generateMatchRecommendations(businessId);
+    res.json(recommendations);
+  } catch (error) {
+    console.error("Error generating match recommendations:", error);
+    res.status(500).json({ error: "Failed to generate match recommendations" });
+  }
+});
+
+router.put("/admin/match-recommendations/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const result = await pool.query(
+      "UPDATE wri_match_recommendations SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *",
+      [status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Match recommendation not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error updating match recommendation:", error);
+    res.status(500).json({ error: "Failed to update match recommendation" });
+  }
+});
+
+// Helper function to calculate lead score
+async function calculateLeadScore(businessId) {
+  try {
+    // Get business details
+    const businessResult = await pool.query("SELECT * FROM wri_businesses WHERE id = $1", [businessId]);
+    if (businessResult.rows.length === 0) {
+      throw new Error("Business not found");
+    }
+    const business = businessResult.rows[0];
+
+    // Get survey response if exists
+    const surveyResult = await pool.query(
+      "SELECT * FROM wri_survey_responses WHERE company_name ILIKE $1 LIMIT 1",
+      [`%${business.company}%`]
+    );
+    const survey = surveyResult.rows[0] || {};
+
+    // Calculate scores
+    let partnershipInterestScore = 0;
+    let companySizeScore = 0;
+    let readinessScore = 0;
+    let budgetScore = 0;
+
+    // Partnership interest score (0-25)
+    if (business.partnership_interest === 'high') partnershipInterestScore = 25;
+    else if (business.partnership_interest === 'medium') partnershipInterestScore = 15;
+    else if (business.partnership_interest === 'low') partnershipInterestScore = 5;
+    else partnershipInterestScore = 10; // default
+
+    // Company size score (0-25)
+    if (business.organisation_type === 'Large Corporation') companySizeScore = 25;
+    else if (business.organisation_type === 'SME') companySizeScore = 15;
+    else if (business.organisation_type === 'Startup') companySizeScore = 10;
+    else companySizeScore = 15; // default
+
+    // Readiness score based on survey (0-25)
+    if (survey.engages_chinese_partners === 'Yes') readinessScore = 25;
+    else if (survey.engages_chinese_partners === 'Planning to') readinessScore = 15;
+    else readinessScore = 5;
+
+    // Budget score (estimated from company size and sector) (0-25)
+    if (business.organisation_type === 'Large Corporation') budgetScore = 25;
+    else if (business.organisation_type === 'SME') budgetScore = 15;
+    else budgetScore = 10;
+
+    const totalScore = partnershipInterestScore + companySizeScore + readinessScore + budgetScore;
+
+    // Upsert lead score
+    const existingScore = await pool.query("SELECT * FROM wri_lead_scores WHERE business_id = $1", [businessId]);
+    
+    let scoreResult;
+    if (existingScore.rows.length > 0) {
+      scoreResult = await pool.query(
+        `UPDATE wri_lead_scores 
+         SET total_score = $1, partnership_interest_score = $2, company_size_score = $3, readiness_score = $4, budget_score = $5,
+             last_calculated = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+         WHERE business_id = $6 RETURNING *`,
+        [totalScore, partnershipInterestScore, companySizeScore, readinessScore, budgetScore, businessId]
+      );
+    } else {
+      scoreResult = await pool.query(
+        `INSERT INTO wri_lead_scores (business_id, total_score, partnership_interest_score, company_size_score, readiness_score, budget_score)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [businessId, totalScore, partnershipInterestScore, companySizeScore, readinessScore, budgetScore]
+      );
+    }
+
+    return scoreResult.rows[0];
+  } catch (error) {
+    console.error("Error calculating lead score:", error);
+    throw error;
+  }
+}
+
+// Helper function to generate match recommendations
+async function generateMatchRecommendations(businessId) {
+  try {
+    // Get target business
+    const targetResult = await pool.query("SELECT * FROM wri_businesses WHERE id = $1", [businessId]);
+    if (targetResult.rows.length === 0) {
+      throw new Error("Business not found");
+    }
+    const target = targetResult.rows[0];
+
+    // Get all other approved businesses
+    const allBusinessesResult = await pool.query(
+      "SELECT * FROM wri_businesses WHERE id != $1 AND is_approved = true",
+      [businessId]
+    );
+    const allBusinesses = allBusinessesResult.rows;
+
+    const recommendations = [];
+
+    for (const business of allBusinesses) {
+      let matchScore = 0;
+      const matchReasons = [];
+
+      // Technology complementarity (0-30)
+      if (target.technology === business.technology) {
+        matchScore += 30;
+        matchReasons.push("Same technology focus");
+      } else {
+        // Check for complementary technologies
+        const complementaryTechs = {
+          'Solar PV': ['Energy Storage', 'Solar Water Heating'],
+          'Energy Storage': ['Solar PV', 'Wind', 'Mini-grids'],
+          'Wind': ['Energy Storage', 'Mini-grids'],
+          'Mini-grids': ['Energy Storage', 'Solar PV', 'Wind'],
+          'Clean Cooking': ['Biogas', 'Solar Water Heating'],
+          'Biogas': ['Clean Cooking', 'Energy Storage'],
+          'E-mobility': ['Energy Storage', 'Charging Infrastructure'],
+          'Productive Use': ['Solar PV', 'Energy Storage']
+        };
+
+        if (complementaryTechs[target.technology]?.includes(business.technology)) {
+          matchScore += 20;
+          matchReasons.push("Complementary technology");
+        }
+      }
+
+      // Geographic proximity (0-20)
+      if (target.country === business.country) {
+        matchScore += 20;
+        matchReasons.push("Same country");
+      } else if (target.country === 'Kenya' && business.country === 'China') {
+        matchScore += 15;
+        matchReasons.push("Kenya-China partnership potential");
+      }
+
+      // Partnership interest alignment (0-25)
+      if (target.partnership_interest === 'high' && business.partnership_interest === 'high') {
+        matchScore += 25;
+        matchReasons.push("Both highly interested in partnerships");
+      } else if (target.partnership_interest === business.partnership_interest) {
+        matchScore += 15;
+        matchReasons.push("Similar partnership interest level");
+      }
+
+      // Organization type complementarity (0-15)
+      const typeComplementarity = {
+        'Large Corporation': ['SME', 'Startup'],
+        'SME': ['Large Corporation', 'Startup'],
+        'Startup': ['Large Corporation', 'SME'],
+        'Government Agency': ['Large Corporation', 'SME'],
+        'Research Institution': ['Large Corporation', 'Startup']
+      };
+
+      if (typeComplementarity[target.organisation_type]?.includes(business.organisation_type)) {
+        matchScore += 15;
+        matchReasons.push("Complementary organization types");
+      }
+
+      // Nature of business alignment (0-10)
+      if (target.nature_of_business === business.nature_of_business) {
+        matchScore += 10;
+        matchReasons.push("Similar business nature");
+      }
+
+      // Only save if match score is above threshold
+      if (matchScore >= 30) {
+        // Upsert match recommendation
+        const upsertResult = await pool.query(
+          `INSERT INTO wri_match_recommendations (business_id_1, business_id_2, match_score, match_reasons, status)
+           VALUES ($1, $2, $3, $4, 'pending')
+           ON CONFLICT (business_id_1, business_id_2) DO UPDATE SET
+             match_score = EXCLUDED.match_score,
+             match_reasons = EXCLUDED.match_reasons,
+             updated_at = CURRENT_TIMESTAMP
+           RETURNING *`,
+          [businessId, business.id, matchScore, matchReasons]
+        );
+        recommendations.push(upsertResult.rows[0]);
+      }
+    }
+
+    return recommendations;
+  } catch (error) {
+    console.error("Error generating match recommendations:", error);
+    throw error;
+  }
+}
+
 export default router;

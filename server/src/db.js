@@ -292,6 +292,100 @@ export const initializeDatabase = async () => {
         ON wri_businesses (is_approved, country, technology);
     `);
 
+    // Lead status tracking table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wri_lead_status (
+        id SERIAL PRIMARY KEY,
+        business_id INTEGER REFERENCES wri_businesses(id) ON DELETE CASCADE,
+        status TEXT NOT NULL DEFAULT 'new',
+        last_contact_date DATE,
+        next_follow_up_date DATE,
+        notes TEXT DEFAULT '',
+        assigned_to TEXT DEFAULT '',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_lead_status_business_index
+        ON wri_lead_status (business_id, status);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_lead_status_status_index
+        ON wri_lead_status (status, next_follow_up_date);
+    `);
+
+    // Activity feed and communication log table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wri_lead_activities (
+        id SERIAL PRIMARY KEY,
+        business_id INTEGER REFERENCES wri_businesses(id) ON DELETE CASCADE,
+        activity_type TEXT NOT NULL,
+        description TEXT NOT NULL,
+        performed_by TEXT DEFAULT '',
+        outcome TEXT DEFAULT '',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_lead_activities_business_index
+        ON wri_lead_activities (business_id, created_at DESC);
+    `);
+
+    // Lead scoring table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wri_lead_scores (
+        id SERIAL PRIMARY KEY,
+        business_id INTEGER REFERENCES wri_businesses(id) ON DELETE CASCADE,
+        total_score INTEGER NOT NULL DEFAULT 0,
+        partnership_interest_score INTEGER NOT NULL DEFAULT 0,
+        company_size_score INTEGER NOT NULL DEFAULT 0,
+        readiness_score INTEGER NOT NULL DEFAULT 0,
+        budget_score INTEGER NOT NULL DEFAULT 0,
+        last_calculated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_lead_scores_business_index
+        ON wri_lead_scores (business_id);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_lead_scores_total_index
+        ON wri_lead_scores (total_score DESC);
+    `);
+
+    // Match recommendations table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS wri_match_recommendations (
+        id SERIAL PRIMARY KEY,
+        business_id_1 INTEGER REFERENCES wri_businesses(id) ON DELETE CASCADE,
+        business_id_2 INTEGER REFERENCES wri_businesses(id) ON DELETE CASCADE,
+        match_score INTEGER NOT NULL DEFAULT 0,
+        match_reasons TEXT[] DEFAULT '{}',
+        status TEXT NOT NULL DEFAULT 'pending',
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(business_id_1, business_id_2)
+      );
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_match_recommendations_score_index
+        ON wri_match_recommendations (match_score DESC);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_match_recommendations_status_index
+        ON wri_match_recommendations (status, match_score DESC);
+    `);
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS wri_events (
         id SERIAL PRIMARY KEY,

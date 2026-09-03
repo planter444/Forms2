@@ -147,6 +147,26 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     required: false
   });
 
+  const [leadStatus, setLeadStatus] = useState([]);
+  const [leadActivities, setLeadActivities] = useState([]);
+  const [leadScores, setLeadScores] = useState([]);
+  const [matchRecommendations, setMatchRecommendations] = useState([]);
+  const [leadStatusForm, setLeadStatusForm] = useState({
+    business_id: null,
+    status: "new",
+    last_contact_date: "",
+    next_follow_up_date: "",
+    notes: "",
+    assigned_to: ""
+  });
+  const [activityForm, setActivityForm] = useState({
+    business_id: null,
+    activity_type: "call",
+    description: "",
+    performed_by: "",
+    outcome: ""
+  });
+
   const [editingItem, setEditingItem] = useState(null);
 
   const fetchSurveyResponses = async () => {
@@ -312,6 +332,164 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     }
   };
 
+  const fetchLeadStatus = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-status`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setLeadStatus(data);
+    } catch (error) {
+      console.error("Error fetching lead status:", error);
+    }
+  };
+
+  const fetchLeadActivities = async (businessId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-activities/${businessId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setLeadActivities(data);
+    } catch (error) {
+      console.error("Error fetching lead activities:", error);
+    }
+  };
+
+  const fetchLeadScores = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-scores`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setLeadScores(data);
+    } catch (error) {
+      console.error("Error fetching lead scores:", error);
+    }
+  };
+
+  const fetchMatchRecommendations = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/match-recommendations`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setMatchRecommendations(data);
+    } catch (error) {
+      console.error("Error fetching match recommendations:", error);
+    }
+  };
+
+  const handleSaveLeadStatus = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-status/${leadStatusForm.business_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(leadStatusForm)
+      });
+      if (response.ok) {
+        setNotice("Lead status updated");
+        setLeadStatusForm({
+          business_id: null,
+          status: "new",
+          last_contact_date: "",
+          next_follow_up_date: "",
+          notes: "",
+          assigned_to: ""
+        });
+        fetchLeadStatus();
+      }
+    } catch (error) {
+      setError("Failed to save lead status");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveActivity = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-activities`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(activityForm)
+      });
+      if (response.ok) {
+        setNotice("Activity logged");
+        setActivityForm({
+          business_id: null,
+          activity_type: "call",
+          description: "",
+          performed_by: "",
+          outcome: ""
+        });
+        if (activityForm.business_id) {
+          fetchLeadActivities(activityForm.business_id);
+        }
+      }
+    } catch (error) {
+      setError("Failed to save activity");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRecalculateScore = async (businessId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/lead-scores/recalculate/${businessId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setNotice("Lead score recalculated");
+        fetchLeadScores();
+      }
+    } catch (error) {
+      setError("Failed to recalculate lead score");
+    }
+  };
+
+  const handleGenerateMatches = async (businessId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/match-recommendations/generate/${businessId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setNotice("Match recommendations generated");
+        fetchMatchRecommendations();
+      }
+    } catch (error) {
+      setError("Failed to generate match recommendations");
+    }
+  };
+
+  const handleUpdateMatchStatus = async (id, status) => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/match-recommendations/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      if (response.ok) {
+        setNotice("Match status updated");
+        fetchMatchRecommendations();
+      }
+    } catch (error) {
+      setError("Failed to update match status");
+    }
+  };
+
   useEffect(() => {
     fetchWriSettings();
     fetchEnquiries();
@@ -321,6 +499,9 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     fetchResources();
     fetchSurveyResponses();
     fetchSurveyQuestions();
+    fetchLeadStatus();
+    fetchLeadScores();
+    fetchMatchRecommendations();
   }, []);
 
   const fetchWriSettings = async () => {
@@ -814,6 +995,10 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           { id: "footer", label: "Footer" },
           { id: "enquiries", label: "Enquiries" },
           { id: "businesses", label: "Businesses" },
+          { id: "lead-status", label: "Lead Status" },
+          { id: "lead-activities", label: "Lead Activities" },
+          { id: "lead-scores", label: "Lead Scores" },
+          { id: "match-recommendations", label: "Match Recommendations" },
           { id: "events", label: "Events" },
           { id: "partners", label: "Partners" },
           { id: "resources", label: "Resources" },
@@ -1383,6 +1568,287 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "lead-status" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Lead Status Tracking</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <select
+                value={leadStatusForm.business_id || ""}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, business_id: parseInt(e.target.value) })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              >
+                <option value="">Select Business</option>
+                {businesses.map(business => (
+                  <option key={business.id} value={business.id}>{business.company}</option>
+                ))}
+              </select>
+              <select
+                value={leadStatusForm.status}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, status: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              >
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="negotiating">Negotiating</option>
+                <option value="closed">Closed</option>
+              </select>
+              <input
+                type="date"
+                placeholder="Last Contact Date"
+                value={leadStatusForm.last_contact_date}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, last_contact_date: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <input
+                type="date"
+                placeholder="Next Follow-up Date"
+                value={leadStatusForm.next_follow_up_date}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, next_follow_up_date: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <input
+                type="text"
+                placeholder="Assigned To"
+                value={leadStatusForm.assigned_to}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, assigned_to: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <textarea
+                placeholder="Notes"
+                value={leadStatusForm.notes}
+                onChange={(e) => setLeadStatusForm({ ...leadStatusForm, notes: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                rows={3}
+              />
+              <button
+                onClick={handleSaveLeadStatus}
+                disabled={loading}
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                style={{ backgroundColor: palette.primary }}
+              >
+                {loading ? "Saving..." : "Update Status"}
+              </button>
+            </div>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {leadStatus.map((status) => (
+                <div key={status.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium" style={{ color: palette.textColor }}>{status.business_name}</p>
+                      <p className="text-xs" style={{ color: palette.mutedTextColor }}>Status: {status.status}</p>
+                      {status.next_follow_up_date && (
+                        <p className="text-xs" style={{ color: palette.mutedTextColor }}>Follow-up: {formatDate(status.next_follow_up_date)}</p>
+                      )}
+                    </div>
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                      status.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                      status.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                      status.status === 'qualified' ? 'bg-green-100 text-green-800' :
+                      status.status === 'negotiating' ? 'bg-purple-100 text-purple-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {status.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "lead-activities" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Lead Activities</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <select
+                value={activityForm.business_id || ""}
+                onChange={(e) => setActivityForm({ ...activityForm, business_id: parseInt(e.target.value) })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              >
+                <option value="">Select Business</option>
+                {businesses.map(business => (
+                  <option key={business.id} value={business.id}>{business.company}</option>
+                ))}
+              </select>
+              <select
+                value={activityForm.activity_type}
+                onChange={(e) => setActivityForm({ ...activityForm, activity_type: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              >
+                <option value="call">Call</option>
+                <option value="email">Email</option>
+                <option value="meeting">Meeting</option>
+                <option value="visit">Site Visit</option>
+                <option value="event">Event</option>
+                <option value="other">Other</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Description"
+                value={activityForm.description}
+                onChange={(e) => setActivityForm({ ...activityForm, description: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <input
+                type="text"
+                placeholder="Performed By"
+                value={activityForm.performed_by}
+                onChange={(e) => setActivityForm({ ...activityForm, performed_by: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <input
+                type="text"
+                placeholder="Outcome"
+                value={activityForm.outcome}
+                onChange={(e) => setActivityForm({ ...activityForm, outcome: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <button
+                onClick={handleSaveActivity}
+                disabled={loading}
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                style={{ backgroundColor: palette.primary }}
+              >
+                {loading ? "Saving..." : "Log Activity"}
+              </button>
+            </div>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {leadActivities.map((activity) => (
+                <div key={activity.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium" style={{ color: palette.textColor }}>{activity.activity_type}</p>
+                      <p className="text-xs" style={{ color: palette.mutedTextColor }}>{activity.description}</p>
+                      {activity.performed_by && (
+                        <p className="text-xs" style={{ color: palette.mutedTextColor }}>By: {activity.performed_by}</p>
+                      )}
+                      {activity.outcome && (
+                        <p className="text-xs" style={{ color: palette.mutedTextColor }}>Outcome: {activity.outcome}</p>
+                      )}
+                    </div>
+                    <p className="text-xs" style={{ color: palette.mutedTextColor }}>{formatDate(activity.created_at)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "lead-scores" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Lead Scores</h3>
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {leadScores.map((score) => (
+              <div key={score.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-medium" style={{ color: palette.textColor }}>{score.business_name}</p>
+                    <p className="text-sm" style={{ color: palette.mutedTextColor }}>Total Score: {score.total_score}/100</p>
+                    <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
+                      <div>Partnership Interest: {score.partnership_interest_score}/25</div>
+                      <div>Company Size: {score.company_size_score}/25</div>
+                      <div>Readiness: {score.readiness_score}/25</div>
+                      <div>Budget: {score.budget_score}/25</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => handleRecalculateScore(score.business_id)}
+                      className="text-xs text-blue-600 hover:underline"
+                    >
+                      Recalculate
+                    </button>
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                      score.total_score >= 75 ? 'bg-green-100 text-green-800' :
+                      score.total_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {score.total_score >= 75 ? 'High' : score.total_score >= 50 ? 'Medium' : 'Low'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "match-recommendations" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Match Recommendations</h3>
+          <div className="mb-4">
+            <select
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleGenerateMatches(parseInt(e.target.value));
+                }
+              }}
+              className="w-full rounded-lg border px-3 py-2 text-sm"
+              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+            >
+              <option value="">Select Business to Generate Matches</option>
+              {businesses.map(business => (
+                <option key={business.id} value={business.id}>{business.company}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {matchRecommendations.map((match) => (
+              <div key={match.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="font-medium" style={{ color: palette.textColor }}>
+                      {match.business_name_1} ↔ {match.business_name_2}
+                    </p>
+                    <p className="text-sm" style={{ color: palette.mutedTextColor }}>Match Score: {match.match_score}/100</p>
+                    <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
+                      {match.match_reasons.join(', ')}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <select
+                      value={match.status}
+                      onChange={(e) => handleUpdateMatchStatus(match.id, e.target.value)}
+                      className="text-xs rounded border px-2 py-1"
+                      style={{ borderColor: palette.borderColor }}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                      match.match_score >= 70 ? 'bg-green-100 text-green-800' :
+                      match.match_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {match.match_score >= 70 ? 'High Match' : match.match_score >= 50 ? 'Medium Match' : 'Low Match'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

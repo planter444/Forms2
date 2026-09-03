@@ -8,9 +8,12 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
   const [realIntroduction, setRealIntroduction] = useState("This dedicated hub facilitates B2B linkages, partnership enquiries, events, business opportunities, knowledge sharing, and stakeholder engagement between Kenya and China in the renewable energy sector.");
   const [realPrimaryCta, setRealPrimaryCta] = useState("Make a Partnership Enquiry");
   const [realSecondaryCta, setRealSecondaryCta] = useState("Browse Business Database");
-  const [realBackgroundImageUrl, setRealBackgroundImageUrl] = useState("");
+  const [realDesktopBackgroundImageUrl, setRealDesktopBackgroundImageUrl] = useState("");
+  const [realMobileBackgroundImageUrl, setRealMobileBackgroundImageUrl] = useState("");
   const [realOverlayOpacity, setRealOverlayOpacity] = useState(0.3);
-  const [realImageFile, setRealImageFile] = useState(null);
+  const [realOverlayColor, setRealOverlayColor] = useState("#000000");
+  const [realDesktopImageFile, setRealDesktopImageFile] = useState(null);
+  const [realMobileImageFile, setRealMobileImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
   // Load settings on mount
@@ -27,8 +30,10 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
           setRealIntroduction(realHero.realIntroduction || realIntroduction);
           setRealPrimaryCta(realHero.realPrimaryCta || realPrimaryCta);
           setRealSecondaryCta(realHero.realSecondaryCta || realSecondaryCta);
-          setRealBackgroundImageUrl(realHero.realBackgroundImageUrl || "");
+          setRealDesktopBackgroundImageUrl(realHero.realDesktopBackgroundImageUrl || "");
+          setRealMobileBackgroundImageUrl(realHero.realMobileBackgroundImageUrl || "");
           setRealOverlayOpacity(realHero.realOverlayOpacity ?? 0.3);
+          setRealOverlayColor(realHero.realOverlayColor || "#000000");
         }
       } catch (error) {
         console.error("Error loading real hero settings:", error);
@@ -41,13 +46,14 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
     setIsSaving(true);
     
     try {
-      let imageUrl = realBackgroundImageUrl;
+      let desktopImageUrl = realDesktopBackgroundImageUrl;
+      let mobileImageUrl = realMobileBackgroundImageUrl;
       
-      // Upload image if file is selected
-      if (realImageFile) {
+      // Upload desktop image if file is selected
+      if (realDesktopImageFile) {
         const formData = new FormData();
-        formData.append("file", realImageFile);
-        formData.append("type", "real-hero");
+        formData.append("file", realDesktopImageFile);
+        formData.append("type", "real-hero-desktop");
         
         const uploadResponse = await fetch(`${API_URL}/api/wri/admin/upload`, {
           method: "POST",
@@ -57,9 +63,31 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
         
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
-          imageUrl = uploadData.url;
+          desktopImageUrl = uploadData.url;
         } else {
-          setError("Failed to upload image");
+          setError("Failed to upload desktop image");
+          setIsSaving(false);
+          return;
+        }
+      }
+      
+      // Upload mobile image if file is selected
+      if (realMobileImageFile) {
+        const formData = new FormData();
+        formData.append("file", realMobileImageFile);
+        formData.append("type", "real-hero-mobile");
+        
+        const uploadResponse = await fetch(`${API_URL}/api/wri/admin/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          mobileImageUrl = uploadData.url;
+        } else {
+          setError("Failed to upload mobile image");
           setIsSaving(false);
           return;
         }
@@ -73,8 +101,10 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
             realIntroduction,
             realPrimaryCta,
             realSecondaryCta,
-            realBackgroundImageUrl: imageUrl,
-            realOverlayOpacity
+            realDesktopBackgroundImageUrl: desktopImageUrl,
+            realMobileBackgroundImageUrl: mobileImageUrl,
+            realOverlayOpacity,
+            realOverlayColor
           }
         }
       };
@@ -90,7 +120,8 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
       
       if (response.ok) {
         setNotice("Real Hero settings saved successfully!");
-        setRealImageFile(null);
+        setRealDesktopImageFile(null);
+        setRealMobileImageFile(null);
       } else {
         setError("Failed to save Real Hero settings");
       }
@@ -163,24 +194,47 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Background Image</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Desktop Background Image</label>
           <div className="space-y-2">
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setRealImageFile(e.target.files?.[0] || null)}
+              onChange={(e) => setRealDesktopImageFile(e.target.files?.[0] || null)}
               className="w-full text-sm"
             />
             <input
               type="url"
-              value={realBackgroundImageUrl}
-              onChange={(e) => setRealBackgroundImageUrl(e.target.value)}
+              value={realDesktopBackgroundImageUrl}
+              onChange={(e) => setRealDesktopBackgroundImageUrl(e.target.value)}
               className="w-full rounded-lg border px-3 py-2 text-sm"
               style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-              placeholder="Or enter real background image URL"
+              placeholder="Or enter desktop background image URL"
             />
-            {realBackgroundImageUrl && (
-              <img src={realBackgroundImageUrl} alt="Real Preview" className="h-32 w-full object-cover rounded-lg mt-2" />
+            {realDesktopBackgroundImageUrl && (
+              <img src={realDesktopBackgroundImageUrl} alt="Desktop Preview" className="h-32 w-full object-cover rounded-lg mt-2" />
+            )}
+          </div>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Mobile Background Image</label>
+          <div className="space-y-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setRealMobileImageFile(e.target.files?.[0] || null)}
+              className="w-full text-sm"
+            />
+            <input
+              type="url"
+              value={realMobileBackgroundImageUrl}
+              onChange={(e) => setRealMobileBackgroundImageUrl(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 text-sm"
+              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              placeholder="Or enter mobile background image URL"
+            />
+            {realMobileBackgroundImageUrl && (
+              <img src={realMobileBackgroundImageUrl} alt="Mobile Preview" className="h-32 w-full object-cover rounded-lg mt-2" />
             )}
           </div>
         </div>
@@ -197,6 +251,17 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
             className="w-full"
             value={realOverlayOpacity}
             onChange={(e) => setRealOverlayOpacity(Number(e.target.value))}
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Overlay Color</label>
+          <input
+            type="color"
+            value={realOverlayColor}
+            onChange={(e) => setRealOverlayColor(e.target.value)}
+            className="w-full h-10 rounded-lg border cursor-pointer"
+            style={{ borderColor: palette.borderColor }}
           />
         </div>
         

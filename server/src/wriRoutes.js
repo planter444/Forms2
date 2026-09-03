@@ -4,9 +4,25 @@ import { pool } from "./db.js";
 import ExcelJS from "exceljs";
 import fs from "fs";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Configure Cloudinary
+const cloudinaryConfigured = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
+);
+
+if (cloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
 
 router.get("/public/settings", async (req, res) => {
   try {
@@ -61,23 +77,27 @@ router.post("/admin/upload", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const { type } = req.body;
-    const fileName = `${type}-${Date.now()}-${req.file.originalname}`;
-    const filePath = `/uploads/wri/${fileName}`;
-
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "wri");
-    console.log("Upload directory:", uploadsDir);
-    
-    if (!fs.existsSync(uploadsDir)) {
-      console.log("Creating upload directory:", uploadsDir);
-      fs.mkdirSync(uploadsDir, { recursive: true });
+    if (!cloudinaryConfigured) {
+      return res.status(503).json({
+        error: "Cloudinary is not configured. Add CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET."
+      });
     }
 
-    const fullPath = path.join(process.cwd(), "public", filePath);
-    console.log("Writing file to:", fullPath);
-    fs.writeFileSync(fullPath, req.file.buffer);
+    const { type } = req.body;
+    const folder = "wri-hero";
+    
+    // Convert buffer to data URI
+    const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+    
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: folder,
+      resource_type: "image",
+      public_id: `${type}-${Date.now()}`
+    });
 
-    res.json({ url: filePath });
+    console.log("Cloudinary upload successful:", result.secure_url);
+    res.json({ url: result.secure_url });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(500).json({ error: "Failed to upload file: " + error.message });

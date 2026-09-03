@@ -3,6 +3,14 @@ import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+// Helper function to convert hex to RGB with opacity
+const hexToRgba = (hex, opacity) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
 const useScrollReveal = ({ threshold = 0.15, rootMargin = "0px 0px -50px 0px" } = {}) => {
   const [inView, setInView] = useState(false);
   const elementRef = useRef(null);
@@ -533,8 +541,40 @@ const WriPartnershipPage = () => {
     <div style={{ backgroundColor: "#f0fdf4", color: "#064e3b" }}>
       <WriNav settings={settings} overHero={overHero} />
 
-      <section id="hero" className="relative min-h-screen flex flex-col justify-center px-4 overflow-hidden pt-20" style={{ backgroundImage: settings?.realHero?.realBackgroundImageUrl ? `url(${settings?.realHero?.realBackgroundImageUrl})` : "linear-gradient(135deg, #059669 0%, #10b981 50%, #065f46 100%)", backgroundSize: "cover", backgroundPosition: "center" }}>
-        <div className="absolute inset-0" style={{ backgroundColor: `rgba(0, 0, 0, ${settings?.realHero?.realOverlayOpacity ?? 0.3})` }} />
+      <section 
+        id="hero" 
+        className="relative min-h-screen flex flex-col justify-center px-4 overflow-hidden pt-20"
+        style={{
+          backgroundImage: settings?.realHero?.realDesktopBackgroundImageUrl 
+            ? `url(${settings?.realHero?.realDesktopBackgroundImageUrl})` 
+            : "linear-gradient(135deg, #059669 0%, #10b981 50%, #065f46 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        {/* Mobile background overlay */}
+        <div 
+          className="md:hidden absolute inset-0"
+          style={{
+            backgroundImage: settings?.realHero?.realMobileBackgroundImageUrl 
+              ? `url(${settings?.realHero?.realMobileBackgroundImageUrl})` 
+              : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        />
+        
+        {/* Overlay with color */}
+        <div 
+          className="absolute inset-0" 
+          style={{ 
+            backgroundColor: hexToRgba(
+              settings?.realHero?.realOverlayColor || "#000000",
+              settings?.realHero?.realOverlayOpacity ?? 0.3
+            )
+          }} 
+        />
+        
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 drop-shadow-lg">
             {settings?.realHero?.realTitle || "Africa–China Renewable Energy Partnership"}

@@ -682,23 +682,6 @@ const WriPartnershipPage = () => {
           <AboutSection settings={settings} />
         </div>
       </section>
-                { bg: "#ecfdf5", border: "#6ee7b7", text: "#047857" }
-              ];
-              const color = colors[index % colors.length];
-              return (
-                <div key={index} className="flex items-start space-x-3 rounded-2xl border p-4 shadow-sm" style={{ backgroundColor: color.bg, borderColor: color.border }}>
-                  <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: color.border }}>
-                    <svg className="h-4 w-4" style={{ color: color.text }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span className="text-sm md:text-base" style={{ color: color.text }}>{item}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       <AnimatedSection id="areas" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">

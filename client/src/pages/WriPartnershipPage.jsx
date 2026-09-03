@@ -35,6 +35,114 @@ const useScrollReveal = ({ threshold = 0.15, rootMargin = "0px 0px -50px 0px" } 
   return [elementRef, inView];
 };
 
+const getAnimationClass = (style, inView) => {
+  if (!inView) return "opacity-0";
+  
+  switch (style) {
+    case "fade-up":
+      return "opacity-100 translate-y-0 transition-all duration-600";
+    case "fade-in":
+      return "opacity-100 transition-all duration-600";
+    case "slide-left":
+      return "opacity-100 translate-x-0 transition-all duration-600";
+    case "slide-right":
+      return "opacity-100 translate-x-0 transition-all duration-600";
+    case "zoom-in":
+      return "opacity-100 scale-100 transition-all duration-600";
+    default:
+      return "opacity-100 translate-y-0 transition-all duration-600";
+  }
+};
+
+const getInitialClass = (style) => {
+  switch (style) {
+    case "fade-up":
+      return "opacity-0 translate-y-8";
+    case "fade-in":
+      return "opacity-0";
+    case "slide-left":
+      return "opacity-0 -translate-x-8";
+    case "slide-right":
+      return "opacity-0 translate-x-8";
+    case "zoom-in":
+      return "opacity-0 scale-95";
+    default:
+      return "opacity-0 translate-y-8";
+  }
+};
+
+const AnimatedSection = ({ children, settings, id, className = "" }) => {
+  const [ref, inView] = useScrollReveal();
+  const animationEnabled = settings?.animation?.enabled !== false;
+  const animationStyle = settings?.animation?.style || "fade-up";
+  const animationDuration = settings?.animation?.duration || 600;
+
+  if (!animationEnabled) {
+    return <section id={id} className={className}>{children}</section>;
+  }
+
+  return (
+    <section id={id} className={className}>
+      <div
+        ref={ref}
+        className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
+        style={{ transitionDuration: `${animationDuration}ms` }}
+      >
+        {children}
+      </div>
+    </section>
+  );
+};
+
+const AboutSection = ({ settings }) => {
+  const [ref, inView] = useScrollReveal();
+  const animationEnabled = settings?.animation?.enabled !== false;
+  const animationStyle = settings?.animation?.style || "fade-up";
+  const animationDuration = settings?.animation?.duration || 600;
+
+  return (
+    <div
+      ref={ref}
+      className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
+      style={{ transitionDuration: `${animationDuration}ms` }}
+    >
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>About the Partnership</h2>
+        <p className="mt-4 text-lg max-w-3xl mx-auto" style={{ color: "#065f46" }}>
+          The Kenya–China Renewable Energy Partnership focuses on strengthening collaboration across key areas:
+        </p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {[
+          "Kenya–China B2B linkages",
+          "Technology transfer",
+          "Investment opportunities",
+          "Local manufacturing and assembly",
+          "Skills development",
+          "Standards and quality assurance",
+          "Renewable energy collaboration"
+        ].map((item, index) => {
+          const colors = [
+            { bg: "#f0fdf4", border: "#a7f3d0", text: "#065f46" },
+            { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
+            { bg: "#ffffff", border: "#e5e7eb", text: "#15803d" },
+            { bg: "#f7fee7", border: "#d9f99d", text: "#3f6212" },
+            { bg: "#f0f9ff", border: "#bae6fd", text: "#0c4a6e" },
+            { bg: "#fafaf9", border: "#e7e5e4", text: "#15803d" },
+            { bg: "#ecfdf5", border: "#a7f3d0", text: "#065f46" }
+          ];
+          const color = colors[index % colors.length];
+          return (
+            <div key={index} className="rounded-2xl border p-4 shadow-sm" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+              <p className="font-medium" style={{ color: color.text }}>{item}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const WriNav = ({ settings, overHero = false }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
@@ -50,7 +158,6 @@ const WriNav = ({ settings, overHero = false }) => {
     { label: "About", href: "#about", to: null },
     { label: "Areas", href: "#areas", to: null },
     { label: "B2B", href: "#opportunities", to: null },
-    { label: "Enquiry", href: "#enquiry", to: null },
     { label: "Events", href: "#events", to: null },
     { label: "Partners", href: "#partners", to: null },
     { label: "Resources", href: "#resources", to: null },
@@ -290,16 +397,6 @@ const areasOfInterest = [
   "Other"
 ];
 
-const enquiryTypes = [
-  "General Enquiry",
-  "Partnership Proposal",
-  "Investment Inquiry",
-  "Technology Inquiry",
-  "Market Information",
-  "Event Participation",
-  "Other"
-];
-
 const resourceTypes = [
   "Report",
   "Policy Brief",
@@ -317,21 +414,6 @@ const WriPartnershipPage = () => {
   const [events, setEvents] = useState([]);
   const [partners, setPartners] = useState([]);
   const [resources, setResources] = useState([]);
-  const [enquiryForm, setEnquiryForm] = useState({
-    name: "",
-    organisation: "",
-    country: "",
-    email: "",
-    phone: "",
-    organisation_type: "",
-    technology_sector: "",
-    area_of_interest: "",
-    enquiry_type: "",
-    message: ""
-  });
-  const [enquiryAttachment, setEnquiryAttachment] = useState(null);
-  const [enquirySubmitting, setEnquirySubmitting] = useState(false);
-  const [enquirySuccess, setEnquirySuccess] = useState(false);
   const [surveyForm, setSurveyForm] = useState({
     company_name: "",
     contact_person: "",
@@ -348,6 +430,15 @@ const WriPartnershipPage = () => {
     future_interest: "",
     interested_activities: [],
     additional_comments: ""
+  });
+  
+  const [otherInputs, setOtherInputs] = useState({
+    nature_of_business_other: "",
+    technologies_other: "",
+    collaboration_types_other: "",
+    challenges_other: "",
+    support_needed_other: "",
+    interested_activities_other: ""
   });
   const [surveySubmitting, setSurveySubmitting] = useState(false);
   const [surveySuccess, setSurveySuccess] = useState(false);
@@ -384,8 +475,11 @@ const WriPartnershipPage = () => {
     const handleScroll = () => {
       const heroSection = document.getElementById('hero');
       if (heroSection) {
-        const heroBottom = heroSection.getBoundingClientRect().bottom;
-        setOverHero(heroBottom > 0);
+        const heroRect = heroSection.getBoundingClientRect();
+        const heroBottom = heroRect.bottom;
+        const heroTop = heroRect.top;
+        // Consider over hero if hero section is still visible in viewport
+        setOverHero(heroBottom > 0 && heroTop < window.innerHeight);
       }
     };
 
@@ -438,46 +532,6 @@ const WriPartnershipPage = () => {
     }
   };
 
-  const handleEnquirySubmit = async (e) => {
-    e.preventDefault();
-    setEnquirySubmitting(true);
-    try {
-      const formData = new FormData();
-      Object.entries(enquiryForm).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      if (enquiryAttachment) {
-        formData.append("attachment", enquiryAttachment);
-      }
-
-      const response = await fetch(`${API_URL}/api/wri/enquiries`, {
-        method: "POST",
-        body: formData
-      });
-
-      if (response.ok) {
-        setEnquirySuccess(true);
-        setEnquiryForm({
-          name: "",
-          organisation: "",
-          country: "",
-          email: "",
-          phone: "",
-          organisation_type: "",
-          technology_sector: "",
-          area_of_interest: "",
-          enquiry_type: "",
-          message: ""
-        });
-        setEnquiryAttachment(null);
-      }
-    } catch (error) {
-      console.error("Error submitting enquiry:", error);
-    } finally {
-      setEnquirySubmitting(false);
-    }
-  };
-
   const handleSurveySubmit = async (e) => {
     e.preventDefault();
     setSurveySubmitting(true);
@@ -485,7 +539,15 @@ const WriPartnershipPage = () => {
       const response = await fetch(`${API_URL}/api/wri/survey`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(surveyForm)
+        body: JSON.stringify({
+          ...surveyForm,
+          nature_of_business_other: surveyForm.nature_of_business.includes("Other") ? otherInputs.nature_of_business_other : "",
+          technologies_other: surveyForm.technologies.includes("Other") ? otherInputs.technologies_other : "",
+          collaboration_types_other: surveyForm.collaboration_types.includes("Other") ? otherInputs.collaboration_types_other : "",
+          challenges_other: surveyForm.challenges.includes("Other") ? otherInputs.challenges_other : "",
+          support_needed_other: surveyForm.support_needed.includes("Other") ? otherInputs.support_needed_other : "",
+          interested_activities_other: surveyForm.interested_activities.includes("Other") ? otherInputs.interested_activities_other : ""
+        })
       });
 
       if (response.ok) {
@@ -507,6 +569,14 @@ const WriPartnershipPage = () => {
           interested_activities: [],
           additional_comments: ""
         });
+        setOtherInputs({
+          nature_of_business_other: "",
+          technologies_other: "",
+          collaboration_types_other: "",
+          challenges_other: "",
+          support_needed_other: "",
+          interested_activities_other: ""
+        });
       }
     } catch (error) {
       console.error("Error submitting survey:", error);
@@ -516,12 +586,22 @@ const WriPartnershipPage = () => {
   };
 
   const handleCheckboxChange = (field, value) => {
-    setSurveyForm(prev => ({
-      ...prev,
-      [field]: prev[field].includes(value)
+    setSurveyForm(prev => {
+      const newValue = prev[field].includes(value)
         ? prev[field].filter(item => item !== value)
-        : [...prev[field], value]
-    }));
+        : [...prev[field], value];
+      
+      // Handle "Other" checkbox
+      if (value === "Other") {
+        const otherField = `${field}_other`;
+        setOtherInputs(prev => ({
+          ...prev,
+          [otherField]: newValue.includes("Other") ? prev[otherField] : ""
+        }));
+      }
+      
+      return { ...prev, [field]: newValue };
+    });
   };
 
   const scrollToSection = (sectionId) => {
@@ -587,15 +667,9 @@ const WriPartnershipPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => scrollToSection("enquiry")}
+              onClick={() => scrollToSection("business-database")}
               className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
-            >
-              {settings?.realHero?.realPrimaryCta || "Make a Partnership Enquiry"}
-            </button>
-            <button
-              onClick={() => scrollToSection("business-database")}
-              className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold border-2 border-white text-white transition hover:scale-105 backdrop-blur-sm"
             >
               {settings?.realHero?.realSecondaryCta || "Browse Business Database"}
             </button>
@@ -605,29 +679,9 @@ const WriPartnershipPage = () => {
 
       <section id="about" className="py-16 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>About the Partnership</h2>
-            <p className="mt-4 text-lg max-w-3xl mx-auto" style={{ color: "#065f46" }}>
-              The Kenya–China Renewable Energy Partnership focuses on strengthening collaboration across key areas:
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              "Kenya–China B2B linkages",
-              "Technology transfer",
-              "Investment opportunities",
-              "Local manufacturing and assembly",
-              "Skills development",
-              "Standards and quality assurance",
-              "Renewable energy collaboration"
-            ].map((item, index) => {
-              const colors = [
-                { bg: "#f0fdf4", border: "#a7f3d0", text: "#065f46" },
-                { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8" },
-                { bg: "#ffffff", border: "#e5e7eb", text: "#15803d" },
-                { bg: "#f7fee7", border: "#d9f99d", text: "#3f6212" },
-                { bg: "#f0f9ff", border: "#bae6fd", text: "#0c4a6e" },
-                { bg: "#fafaf9", border: "#e7e5e4", text: "#15803d" },
+          <AboutSection settings={settings} />
+        </div>
+      </section>
                 { bg: "#ecfdf5", border: "#6ee7b7", text: "#047857" }
               ];
               const color = colors[index % colors.length];
@@ -646,7 +700,7 @@ const WriPartnershipPage = () => {
         </div>
       </section>
 
-      <section id="areas" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }}>
+      <AnimatedSection id="areas" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Technology & Business Areas</h2>
@@ -674,9 +728,9 @@ const WriPartnershipPage = () => {
             })}
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section id="opportunities" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }}>
+      <AnimatedSection id="opportunities" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>B2B Opportunities</h2>
@@ -695,171 +749,9 @@ const WriPartnershipPage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section id="enquiry" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }}>
-        <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Partnership Enquiry</h2>
-            <p className="mt-4 text-lg max-w-3xl mx-auto" style={{ color: "#065f46" }}>
-              Submit your enquiry to explore partnership opportunities with Chinese renewable energy companies and stakeholders.
-            </p>
-          </div>
-          {enquirySuccess && (
-            <div className="mb-8 rounded-2xl border p-4" style={{ backgroundColor: "#f0fdf4", borderColor: "#86efac" }}>
-              <p className="text-center font-medium" style={{ color: "#065f46" }}>Thank you! Your enquiry has been submitted successfully. We will get back to you soon.</p>
-            </div>
-          )}
-          <form onSubmit={handleEnquirySubmit} className="rounded-2xl border p-6 md:p-8 shadow-lg" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
-            <div className="grid gap-4 md:gap-6 md:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={enquiryForm.name}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, name: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff", focusRingColor: "#059669" }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Organisation/Company *</label>
-                <input
-                  type="text"
-                  required
-                  value={enquiryForm.organisation}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, organisation: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Country *</label>
-                <input
-                  type="text"
-                  required
-                  value={enquiryForm.country}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, country: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Email *</label>
-                <input
-                  type="email"
-                  required
-                  value={enquiryForm.email}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Phone</label>
-                <input
-                  type="tel"
-                  value={enquiryForm.phone}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Organisation Type *</label>
-                <select
-                  required
-                  value={enquiryForm.organisation_type}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, organisation_type: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                >
-                  <option value="">Select organisation type</option>
-                  {organisationTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Technology/Sector *</label>
-                <select
-                  required
-                  value={enquiryForm.technology_sector}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, technology_sector: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                >
-                  <option value="">Select technology/sector</option>
-                  {technologySectors.map((sector) => (
-                    <option key={sector} value={sector}>{sector}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Area of Interest *</label>
-                <select
-                  required
-                  value={enquiryForm.area_of_interest}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, area_of_interest: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                >
-                  <option value="">Select area of interest</option>
-                  {areasOfInterest.map((area) => (
-                    <option key={area} value={area}>{area}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Type of Enquiry *</label>
-                <select
-                  required
-                  value={enquiryForm.enquiry_type}
-                  onChange={(e) => setEnquiryForm({ ...enquiryForm, enquiry_type: e.target.value })}
-                  className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                  style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                >
-                  <option value="">Select enquiry type</option>
-                  {enquiryTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="mt-6">
-              <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Message *</label>
-              <textarea
-                required
-                rows={4}
-                value={enquiryForm.message}
-                onChange={(e) => setEnquiryForm({ ...enquiryForm, message: e.target.value })}
-                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-              />
-            </div>
-            <div className="mt-6">
-              <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>Attachment (Optional)</label>
-              <input
-                type="file"
-                onChange={(e) => setEnquiryAttachment(e.target.files?.[0] || null)}
-                className="w-full text-sm"
-                style={{ color: "#065f46" }}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={enquirySubmitting}
-              className="mt-8 w-full rounded-full px-8 py-4 text-white font-bold text-lg transition hover:scale-105 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: "#059669" }}
-            >
-              {enquirySubmitting ? "Submitting..." : "Submit Enquiry"}
-            </button>
-          </form>
-        </div>
-      </section>
-
-      <section id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }}>
+      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Events</h2>
@@ -920,10 +812,10 @@ const WriPartnershipPage = () => {
         </div>
       </section>
 
-      <section id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }}>
+      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-4xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>KEREA Member Survey</h2>
+            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Career Survey</h2>
             <p className="mt-4 text-lg" style={{ color: "#065f46" }}>
               Kenya Renewable Energy Association Survey on Kenya–China Business & Partnership Engagement
             </p>
@@ -1014,6 +906,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.nature_of_business.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.nature_of_business_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, nature_of_business_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>7. Renewable Energy Technologies (Select all that apply) *</label>
@@ -1029,6 +931,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.technologies.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.technologies_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, technologies_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -1067,6 +979,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.collaboration_types.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.collaboration_types_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, collaboration_types_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>10. How long has your organization been engaging with Chinese partners? *</label>
@@ -1105,6 +1027,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.challenges.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.challenges_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, challenges_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>12. What support would you like KEREA to provide? (Select all that apply) *</label>
@@ -1120,6 +1052,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.support_needed.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.support_needed_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, support_needed_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -1147,7 +1089,7 @@ const WriPartnershipPage = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>14. Which of the following Kenya–China business engagement activities would your organization be interested in participating in? (Select all that apply) *</label>
                     <div className="grid grid-cols-2 gap-2 mt-2">
-                      {["Trade fairs", "Virtual B2B meetings", "Investor forums", "Site visits", "Product exhibitions", "Technical workshops", "Joint pilot projects", "None of the above"].map((option) => (
+                      {["Trade fairs", "Virtual B2B meetings", "Investor forums", "Site visits", "Product exhibitions", "Technical workshops", "Joint pilot projects", "Other"].map((option) => (
                         <label key={option} className="flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
                           <input
                             type="checkbox"
@@ -1158,6 +1100,16 @@ const WriPartnershipPage = () => {
                         </label>
                       ))}
                     </div>
+                    {surveyForm.interested_activities.includes("Other") && (
+                      <input
+                        type="text"
+                        value={otherInputs.interested_activities_other}
+                        onChange={(e) => setOtherInputs(prev => ({ ...prev, interested_activities_other: e.target.value }))}
+                        placeholder="Please specify"
+                        className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                        style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                      />
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>15. Please share any additional comments, recommendations, or partnership interests *</label>
@@ -1184,9 +1136,9 @@ const WriPartnershipPage = () => {
             </form>
           )}
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section id="partners" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }}>
+      <AnimatedSection id="partners" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Partners & Stakeholders</h2>
@@ -1228,9 +1180,9 @@ const WriPartnershipPage = () => {
             </div>
           )}
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }}>
+      <AnimatedSection id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Resources</h2>
@@ -1288,9 +1240,9 @@ const WriPartnershipPage = () => {
             </div>
           )}
         </div>
-      </section>
+      </AnimatedSection>
 
-      <section id="business-database" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }}>
+      <AnimatedSection id="business-database" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Business Database</h2>
@@ -1320,9 +1272,20 @@ const WriPartnershipPage = () => {
                   style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
                 >
                   <option value="">All technologies</option>
-                  {technologySectors.map((sector) => (
-                    <option key={sector} value={sector}>{sector}</option>
-                  ))}
+                  <option value="Solar PV">Solar PV</option>
+                  <option value="Wind Power">Wind Power</option>
+                  <option value="Hydropower">Hydropower</option>
+                  <option value="Geothermal">Geothermal</option>
+                  <option value="Biomass">Biomass</option>
+                  <option value="Energy Storage">Energy Storage</option>
+                  <option value="Grid Solutions">Grid Solutions</option>
+                  <option value="E-Mobility">E-Mobility</option>
+                  <option value="PURE">PURE</option>
+                  <option value="Green Manufacturing">Green Manufacturing</option>
+                  <option value="Wind">Wind</option>
+                  <option value="Hydro">Hydro</option>
+                  <option value="Biomass">Biomass</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
@@ -1334,9 +1297,14 @@ const WriPartnershipPage = () => {
                   style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
                 >
                   <option value="">All types</option>
-                  {organisationTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
+                  <option value="Company">Company</option>
+                  <option value="Government Agency">Government Agency</option>
+                  <option value="Research Institution">Research Institution</option>
+                  <option value="NGO/Non-profit">NGO/Non-profit</option>
+                  <option value="Financial Institution">Financial Institution</option>
+                  <option value="Development Partner">Development Partner</option>
+                  <option value="Industry Association">Industry Association</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
@@ -1393,7 +1361,7 @@ const WriPartnershipPage = () => {
             </div>
           )}
         </div>
-      </section>
+      </AnimatedSection>
 
       <footer className="py-12 px-4" style={{ backgroundColor: "#064e3b", color: "#ffffff" }}>
         <div className="mx-auto max-w-6xl">

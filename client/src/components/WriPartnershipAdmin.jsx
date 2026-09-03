@@ -16,6 +16,11 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       secondaryCta: "Browse Business Database",
       backgroundImageUrl: "",
       overlayOpacity: 0.3
+    },
+    animation: {
+      enabled: true,
+      style: "fade-up",
+      duration: 600
     }
   });
   const [heroImageFile, setHeroImageFile] = useState(null);
@@ -690,7 +695,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       <div className="flex gap-2 border-b" style={{ borderColor: palette.borderColor }}>
-        {["hero", "real-hero", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
+        {["hero", "real-hero", "animation", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
           <button
             key={tab}
             type="button"
@@ -715,6 +720,68 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
 
       {activeSubTab === "real-hero" && (
         <WriRealHeroAdmin token={token} palette={palette} setNotice={setNotice} setError={setError} />
+      )}
+
+      {activeSubTab === "animation" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Animation Settings</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Enable Animations</label>
+              <select
+                value={wriSettings.animation?.enabled ? "true" : "false"}
+                onChange={(e) => setWriSettings({
+                  ...wriSettings,
+                  animation: { ...wriSettings.animation, enabled: e.target.value === "true" }
+                })}
+                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Style</label>
+              <select
+                value={wriSettings.animation?.style || "fade-up"}
+                onChange={(e) => setWriSettings({
+                  ...wriSettings,
+                  animation: { ...wriSettings.animation, style: e.target.value }
+                })}
+                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+              >
+                <option value="fade-up">Fade Up</option>
+                <option value="fade-in">Fade In</option>
+                <option value="slide-left">Slide Left</option>
+                <option value="slide-right">Slide Right</option>
+                <option value="zoom-in">Zoom In</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Duration (ms)</label>
+              <input
+                type="number"
+                value={wriSettings.animation?.duration || 600}
+                onChange={(e) => setWriSettings({
+                  ...wriSettings,
+                  animation: { ...wriSettings.animation, duration: parseInt(e.target.value) || 600 }
+                })}
+                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleSaveWriSettings}
+              className="px-6 py-3 rounded-full font-medium text-white transition hover:scale-105"
+              style={{ backgroundColor: palette.primary }}
+            >
+              Save Animation Settings
+            </button>
+          </div>
+        </div>
       )}
 
       {activeSubTab === "enquiries" && (

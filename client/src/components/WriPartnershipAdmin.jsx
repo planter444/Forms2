@@ -263,7 +263,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         setNotice("WRI settings saved successfully");
         setHeroImageFile(null);
         fetchWriSettings();
-        window.location.reload();
       } else {
         const errorData = await response.json();
         console.error("Save failed:", errorData);

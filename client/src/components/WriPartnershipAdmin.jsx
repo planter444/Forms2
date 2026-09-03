@@ -2074,7 +2074,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 {editingItem ? "Edit Question" : "Add New Question"}
               </h4>
               <div className="grid grid-cols-2 gap-4">
-              <input
+                <input
                 type="number"
                 placeholder="Section Order"
                 value={surveyQuestionForm.section_order}
@@ -2090,83 +2090,84 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 className="rounded-lg border px-3 py-2 text-sm"
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               />
-            </div>
-            <input
-              type="text"
-              placeholder="Question Text"
-              value={surveyQuestionForm.question_text}
-              onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_text: e.target.value })}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
-              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-            />
-            <select
-              value={surveyQuestionForm.question_type}
-              onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_type: e.target.value })}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
-              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-            >
-              <option value="text">Text</option>
-              <option value="email">Email</option>
-              <option value="tel">Phone</option>
-              <option value="radio">Radio (Single Choice)</option>
-              <option value="checkbox">Checkbox (Multiple Choice)</option>
-              <option value="textarea">Textarea</option>
-              <option value="scale">Scale (1-10)</option>
-            </select>
-            {(surveyQuestionForm.question_type === "radio" || surveyQuestionForm.question_type === "checkbox") && (
-              <div>
-                <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Options (comma-separated)</label>
-                <input
-                  type="text"
-                  placeholder="Option 1, Option 2, Option 3"
-                  value={surveyQuestionForm.options.join(", ")}
-                  onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, options: e.target.value.split(",").map(o => o.trim()) })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
               </div>
-            )}
-            {surveyQuestionForm.question_type === "scale" && (
-              <div>
-                <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Scale Range</label>
-                <p className="text-xs" style={{ color: palette.mutedTextColor }}>1 (Lowest) to 10 (Highest)</p>
-              </div>
-            )}
-            <label className="flex items-center gap-2">
               <input
-                type="checkbox"
-                checked={surveyQuestionForm.required}
-                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, required: e.target.checked })}
+                type="text"
+                placeholder="Question Text"
+                value={surveyQuestionForm.question_text}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_text: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               />
-              <span className="text-sm" style={{ color: palette.textColor }}>Required</span>
-            </label>
-            <button
-              onClick={handleSaveSurveyQuestion}
-              disabled={loading}
-              className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
-              style={{ backgroundColor: palette.primary }}
-            >
-              {loading ? "Saving..." : (editingItem ? "Update Question" : "Add Question")}
-            </button>
-            {editingItem && (
-              <button
-                onClick={() => {
-                  setEditingItem(null);
-                  setSurveyQuestionForm({
-                    section_order: 1,
-                    question_order: 1,
-                    question_text: "",
-                    question_type: "text",
-                    options: [],
-                    required: false
-                  });
-                }}
-                className="rounded-lg px-4 py-2 text-sm font-semibold"
-                style={{ backgroundColor: palette.surfaceMuted, color: palette.textColor }}
+              <select
+                value={surveyQuestionForm.question_type}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_type: e.target.value })}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               >
-                Cancel
+                <option value="text">Text</option>
+                <option value="email">Email</option>
+                <option value="tel">Phone</option>
+                <option value="radio">Radio (Single Choice)</option>
+                <option value="checkbox">Checkbox (Multiple Choice)</option>
+                <option value="textarea">Textarea</option>
+                <option value="scale">Scale (1-10)</option>
+              </select>
+              {(surveyQuestionForm.question_type === "radio" || surveyQuestionForm.question_type === "checkbox") && (
+                <div>
+                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Options (comma-separated)</label>
+                  <input
+                    type="text"
+                    placeholder="Option 1, Option 2, Option 3"
+                    value={surveyQuestionForm.options.join(", ")}
+                    onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, options: e.target.value.split(",").map(o => o.trim()) })}
+                    className="w-full rounded-lg border px-3 py-2 text-sm"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                  />
+                </div>
+              )}
+              {surveyQuestionForm.question_type === "scale" && (
+                <div>
+                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Scale Range</label>
+                  <p className="text-xs" style={{ color: palette.mutedTextColor }}>1 (Lowest) to 10 (Highest)</p>
+                </div>
+              )}
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={surveyQuestionForm.required}
+                  onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, required: e.target.checked })}
+                />
+                <span className="text-sm" style={{ color: palette.textColor }}>Required</span>
+              </label>
+              <button
+                onClick={handleSaveSurveyQuestion}
+                disabled={loading}
+                className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                style={{ backgroundColor: palette.primary }}
+              >
+                {loading ? "Saving..." : (editingItem ? "Update Question" : "Add Question")}
               </button>
-            )}
+              {editingItem && (
+                <button
+                  onClick={() => {
+                    setEditingItem(null);
+                    setSurveyQuestionForm({
+                      section_order: 1,
+                      question_order: 1,
+                      question_text: "",
+                      question_type: "text",
+                      options: [],
+                      required: false
+                    });
+                  }}
+                  className="rounded-lg px-4 py-2 text-sm font-semibold"
+                  style={{ backgroundColor: palette.surfaceMuted, color: palette.textColor }}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </div>
           <div className="mt-6">
             <div className="flex items-center justify-between mb-3">

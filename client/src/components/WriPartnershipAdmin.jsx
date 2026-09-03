@@ -212,7 +212,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       const data = await response.json();
       console.log("Fetched WRI settings:", data.wri);
       if (data.wri) {
-        setWriSettings(data.wri);
+        // Force a complete state update
+        setWriSettings(JSON.parse(JSON.stringify(data.wri)));
       }
     } catch (error) {
       console.error("Error fetching WRI settings:", error);
@@ -269,6 +270,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       if (response.ok) {
         setNotice("WRI settings saved successfully");
         setHeroImageFile(null);
+        // Reload the entire component state
         await fetchWriSettings();
       } else {
         const errorData = await response.json();

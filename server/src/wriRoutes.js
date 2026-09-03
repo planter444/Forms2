@@ -13,6 +13,7 @@ router.get("/public/settings", async (req, res) => {
     const result = await pool.query("SELECT settings FROM site_settings WHERE id = 'default'");
     const settings = result.rows[0]?.settings || {};
     const wriSettings = settings.wri || {};
+    console.log("Fetched WRI settings from database:", wriSettings);
     res.json({ wri: wriSettings });
   } catch (error) {
     console.error("Error fetching WRI settings:", error);
@@ -23,16 +24,29 @@ router.get("/public/settings", async (req, res) => {
 router.put("/admin/settings", async (req, res) => {
   try {
     const { wri } = req.body;
+    console.log("Received WRI settings to save:", wri);
     
     const result = await pool.query("SELECT settings FROM site_settings WHERE id = 'default'");
     const settings = result.rows[0]?.settings || {};
     
     settings.wri = wri;
     
-    await pool.query(
-      "UPDATE site_settings SET settings = $1 WHERE id = 'default'",
-      [settings]
-    );
+    console.log("Updated settings object:", settings);
+    
+    // Check if row exists and insert or update accordingly
+    if (result.rows.length === 0) {
+      await pool.query(
+        "INSERT INTO site_settings (id, settings) VALUES ('default', $1)",
+        [settings]
+      );
+      console.log("Inserted new WRI settings");
+    } else {
+      await pool.query(
+        "UPDATE site_settings SET settings = $1 WHERE id = 'default'",
+        [settings]
+      );
+      console.log("Updated existing WRI settings");
+    }
     
     res.json({ success: true, wri });
   } catch (error) {

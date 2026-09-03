@@ -371,6 +371,12 @@ export const initializeDatabase = async () => {
         future_interest TEXT NOT NULL,
         interested_activities TEXT[] DEFAULT '{}',
         additional_comments TEXT DEFAULT '',
+        nature_of_business_other TEXT DEFAULT '',
+        technologies_other TEXT DEFAULT '',
+        collaboration_types_other TEXT DEFAULT '',
+        challenges_other TEXT DEFAULT '',
+        support_needed_other TEXT DEFAULT '',
+        interested_activities_other TEXT DEFAULT '',
         submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
@@ -442,6 +448,32 @@ export const initializeDatabase = async () => {
     await pool.query(`
       ALTER TABLE wri_survey_responses
       ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+    `);
+
+    // Add "Other" custom text columns for survey responses
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS nature_of_business_other TEXT DEFAULT '';
+    `);
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS technologies_other TEXT DEFAULT '';
+    `);
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS collaboration_types_other TEXT DEFAULT '';
+    `);
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS challenges_other TEXT DEFAULT '';
+    `);
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS support_needed_other TEXT DEFAULT '';
+    `);
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS interested_activities_other TEXT DEFAULT '';
     `);
 
     await pool.query(`ALTER TABLE submissions DROP CONSTRAINT IF EXISTS submissions_email_key;`);

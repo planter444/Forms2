@@ -129,7 +129,13 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     support_needed: [],
     future_interest: "",
     interested_activities: [],
-    additional_comments: ""
+    additional_comments: "",
+    nature_of_business_other: "",
+    technologies_other: "",
+    collaboration_types_other: "",
+    challenges_other: "",
+    support_needed_other: "",
+    interested_activities_other: ""
   });
 
   const [surveyQuestionForm, setSurveyQuestionForm] = useState({
@@ -207,7 +213,13 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           support_needed: [],
           future_interest: "",
           interested_activities: [],
-          additional_comments: ""
+          additional_comments: "",
+          nature_of_business_other: "",
+          technologies_other: "",
+          collaboration_types_other: "",
+          challenges_other: "",
+          support_needed_other: "",
+          interested_activities_other: ""
         });
         setEditingItem(null);
         fetchSurveyResponses();
@@ -1722,6 +1734,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.nature_of_business.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.nature_of_business_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, nature_of_business_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Renewable Energy Technologies</label>
@@ -1742,6 +1764,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.technologies.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.technologies_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, technologies_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -1777,6 +1809,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.collaboration_types.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.collaboration_types_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, collaboration_types_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
                 <select
                   value={surveyForm.engagement_duration}
@@ -1813,6 +1855,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.challenges.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.challenges_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, challenges_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Support Needed</label>
@@ -1833,6 +1885,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.support_needed.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.support_needed_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, support_needed_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -1868,6 +1930,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </label>
                     ))}
                   </div>
+                  {surveyForm.interested_activities.includes("Other") && (
+                    <input
+                      type="text"
+                      placeholder="Please specify"
+                      value={surveyForm.interested_activities_other}
+                      onChange={(e) => setSurveyForm({ ...surveyForm, interested_activities_other: e.target.value })}
+                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                    />
+                  )}
                 </div>
                 <textarea
                   placeholder="Additional Comments"
@@ -1943,13 +2015,27 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                             onClick={() => {
                               setEditingItem(response);
                               setSurveyForm({
-                                ...response,
+                                company_name: response.company_name || "",
+                                contact_person: response.contact_person || "",
+                                position: response.position || "",
+                                email: response.email || "",
+                                phone: response.phone || "",
                                 nature_of_business: response.nature_of_business || [],
                                 technologies: response.technologies || [],
+                                engages_chinese_partners: response.engages_chinese_partners || "",
                                 collaboration_types: response.collaboration_types || [],
+                                engagement_duration: response.engagement_duration || "",
                                 challenges: response.challenges || [],
                                 support_needed: response.support_needed || [],
-                                interested_activities: response.interested_activities || []
+                                future_interest: response.future_interest || "",
+                                interested_activities: response.interested_activities || [],
+                                additional_comments: response.additional_comments || "",
+                                nature_of_business_other: response.nature_of_business_other || "",
+                                technologies_other: response.technologies_other || "",
+                                collaboration_types_other: response.collaboration_types_other || "",
+                                challenges_other: response.challenges_other || "",
+                                support_needed_other: response.support_needed_other || "",
+                                interested_activities_other: response.interested_activities_other || ""
                               });
                             }}
                             className="text-xs text-blue-600 hover:underline"
@@ -2072,45 +2158,53 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           <div className="mt-6">
             <h4 className="text-md font-medium mb-3" style={{ color: palette.textColor }}>Existing Questions</h4>
             <div className="space-y-2">
-              {surveyQuestions.map((question) => (
-                <div key={question.id} className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}>
-                  <div>
-                    <div className="text-sm font-medium" style={{ color: palette.textColor }}>
-                      Section {question.section_order} - Q{question.question_order}: {question.question_text}
+              {surveyQuestions.map((question, index) => {
+                // Calculate real question number (1-15)
+                const sectionQuestions = surveyQuestions.filter(q => q.section_order === question.section_order);
+                const sectionQuestionIndex = sectionQuestions.findIndex(q => q.id === question.id);
+                const sectionStartNumber = surveyQuestions.filter(q => q.section_order < question.section_order).length;
+                const realNumber = sectionStartNumber + sectionQuestionIndex + 1;
+
+                return (
+                  <div key={question.id} className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}>
+                    <div>
+                      <div className="text-sm font-medium" style={{ color: palette.textColor }}>
+                        {realNumber}. {question.question_text}
+                      </div>
+                      <div className="text-xs" style={{ color: palette.mutedTextColor }}>
+                        Section {question.section_order} | Type: {question.question_type} | Required: {question.required ? "Yes" : "No"}
+                        {question.options.length > 0 && ` | Options: ${question.options.join(", ")}`}
+                      </div>
                     </div>
-                    <div className="text-xs" style={{ color: palette.mutedTextColor }}>
-                      Type: {question.question_type} | Required: {question.required ? "Yes" : "No"}
-                      {question.options.length > 0 && ` | Options: ${question.options.join(", ")}`}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingItem(question);
+                          setSurveyQuestionForm({
+                            section_order: question.section_order,
+                            question_order: question.question_order,
+                            question_text: question.question_text,
+                            question_type: question.question_type,
+                            options: question.options,
+                            required: question.required
+                          });
+                        }}
+                        className="rounded px-3 py-1 text-xs font-semibold"
+                        style={{ backgroundColor: palette.primary, color: "white" }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSurveyQuestion(question.id)}
+                        className="rounded px-3 py-1 text-xs font-semibold"
+                        style={{ backgroundColor: "#ef4444", color: "white" }}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setEditingItem(question);
-                        setSurveyQuestionForm({
-                          section_order: question.section_order,
-                          question_order: question.question_order,
-                          question_text: question.question_text,
-                          question_type: question.question_type,
-                          options: question.options,
-                          required: question.required
-                        });
-                      }}
-                      className="rounded px-3 py-1 text-xs font-semibold"
-                      style={{ backgroundColor: palette.primary, color: "white" }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSurveyQuestion(question.id)}
-                      className="rounded px-3 py-1 text-xs font-semibold"
-                      style={{ backgroundColor: "#ef4444", color: "white" }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {surveyQuestions.length === 0 && (
               <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No survey questions yet.</p>

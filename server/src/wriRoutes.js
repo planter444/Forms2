@@ -363,14 +363,20 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       { header: "Email", key: "email", width: 25 },
       { header: "Phone", key: "phone", width: 15 },
       { header: "Nature of Business", key: "nature_of_business", width: 30 },
+      { header: "Nature of Business (Other)", key: "nature_of_business_other", width: 30 },
       { header: "Technologies", key: "technologies", width: 30 },
+      { header: "Technologies (Other)", key: "technologies_other", width: 30 },
       { header: "Engages Chinese Partners", key: "engages_chinese_partners", width: 25 },
       { header: "Collaboration Types", key: "collaboration_types", width: 30 },
+      { header: "Collaboration Types (Other)", key: "collaboration_types_other", width: 30 },
       { header: "Engagement Duration", key: "engagement_duration", width: 20 },
       { header: "Challenges", key: "challenges", width: 30 },
+      { header: "Challenges (Other)", key: "challenges_other", width: 30 },
       { header: "Support Needed", key: "support_needed", width: 30 },
+      { header: "Support Needed (Other)", key: "support_needed_other", width: 30 },
       { header: "Future Interest", key: "future_interest", width: 20 },
       { header: "Interested Activities", key: "interested_activities", width: 30 },
+      { header: "Interested Activities (Other)", key: "interested_activities_other", width: 30 },
       { header: "Additional Comments", key: "additional_comments", width: 40 },
       { header: "Submitted At", key: "submitted_at", width: 20 }
     ];
@@ -383,7 +389,14 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       collaboration_types: Array.isArray(response.collaboration_types) ? response.collaboration_types.join(', ') : response.collaboration_types,
       challenges: Array.isArray(response.challenges) ? response.challenges.join(', ') : response.challenges,
       support_needed: Array.isArray(response.support_needed) ? response.support_needed.join(', ') : response.support_needed,
-      interested_activities: Array.isArray(response.interested_activities) ? response.interested_activities.join(', ') : response.interested_activities
+      interested_activities: Array.isArray(response.interested_activities) ? response.interested_activities.join(', ') : response.interested_activities,
+      // Add "Other" custom text fields
+      nature_of_business_other: response.nature_of_business_other || '',
+      technologies_other: response.technologies_other || '',
+      collaboration_types_other: response.collaboration_types_other || '',
+      challenges_other: response.challenges_other || '',
+      support_needed_other: response.support_needed_other || '',
+      interested_activities_other: response.interested_activities_other || ''
     }));
 
     worksheet.addRows(formattedRows);

@@ -753,7 +753,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-4 py-2 md:px-6 md:py-3 md:w-auto rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+              className="px-4 py-2 md:px-6 md:py-3 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
@@ -891,7 +891,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="opportunities" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }} settings={settings}>
+      <AnimatedSection id="opportunities" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>B2B Opportunities</h2>
@@ -977,7 +977,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
+      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-4xl">
           {!surveyStarted ? (
             <div className="text-center">

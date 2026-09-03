@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import WriHeroSettings from "./WriHeroSettings.jsx";
+import WriHeroAdminSimple from "./WriHeroAdminSimple.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -709,7 +709,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       {activeSubTab === "hero" && (
-        <WriHeroSettings token={token} palette={palette} setNotice={setNotice} setError={setError} />
+        <WriHeroAdminSimple token={token} palette={palette} setNotice={setNotice} setError={setError} />
       )}
 
       {activeSubTab === "enquiries" && (

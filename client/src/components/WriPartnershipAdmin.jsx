@@ -210,15 +210,9 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     try {
       const response = await fetch(`${API_URL}/api/wri/public/settings`);
       const data = await response.json();
+      console.log("Fetched WRI settings:", data.wri);
       if (data.wri) {
-        setWriSettings(prev => ({
-          ...prev,
-          ...data.wri,
-          hero: {
-            ...prev.hero,
-            ...(data.wri.hero || {})
-          }
-        }));
+        setWriSettings(data.wri);
       }
     } catch (error) {
       console.error("Error fetching WRI settings:", error);
@@ -227,6 +221,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
 
   const handleSaveWriSettings = async () => {
     try {
+      console.log("Saving WRI settings:", wriSettings);
       let imageUrl = wriSettings.hero?.backgroundImageUrl || "";
       
       if (heroImageFile) {
@@ -250,19 +245,26 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         }
       }
       
+      const payload = { wri: { ...wriSettings, hero: { ...wriSettings.hero, backgroundImageUrl: imageUrl } } };
+      console.log("Saving payload:", payload);
+      
       const response = await fetch(`${API_URL}/api/wri/admin/settings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ wri: { ...wriSettings, hero: { ...wriSettings.hero, backgroundImageUrl: imageUrl } } })
+        body: JSON.stringify(payload)
       });
+      
+      console.log("Save response status:", response.status);
+      const responseData = await response.json();
+      console.log("Save response data:", responseData);
       
       if (response.ok) {
         setNotice("WRI settings saved successfully");
         setHeroImageFile(null);
-        fetchWriSettings();
+        await fetchWriSettings();
       } else {
         const errorData = await response.json();
         console.error("Save failed:", errorData);

@@ -1333,6 +1333,25 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   />
                   <div className="text-xs mt-1" style={{ color: palette.textColor }}>Opacity: {wriSettings.patterns?.opacity || 30}%</div>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Particle & Line Thickness</label>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="3"
+                    step="0.1"
+                    value={wriSettings.patterns?.thickness || 1}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        thickness: parseFloat(e.target.value)
+                      }
+                    })}
+                    className="w-full"
+                  />
+                  <div className="text-xs mt-1" style={{ color: palette.textColor }}>Thickness: {wriSettings.patterns?.thickness || 1}x</div>
+                </div>
               </div>
             </div>
 

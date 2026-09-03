@@ -654,6 +654,7 @@ const WriPartnershipPage = () => {
         <ParticleBackground 
           color={settings?.patterns?.color || "#059669"}
           opacity={(settings?.patterns?.opacity || 30) / 100}
+          thickness={settings?.patterns?.thickness || 1}
         />
       )}
       <WriNav settings={settings} overHero={overHero} />

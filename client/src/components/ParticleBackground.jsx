@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const ParticleBackground = ({ color = "#059669", opacity = 0.3 }) => {
+const ParticleBackground = ({ color = "#059669", opacity = 0.3, thickness = 1 }) => {
   const canvasRef = useRef(null);
   const particlesRef = useRef([]);
   const animationRef = useRef(null);
@@ -28,7 +28,7 @@ const ParticleBackground = ({ color = "#059669", opacity = 0.3 }) => {
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * 0.5,
           vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 1 + 0.5
+          radius: (Math.random() * 1 + 0.5) * thickness
         });
       }
       particlesRef.current = particles;
@@ -55,7 +55,7 @@ const ParticleBackground = ({ color = "#059669", opacity = 0.3 }) => {
             const lineOpacity = (1 - distance / maxDistance) * opacity * 0.5;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${lineOpacity})`;
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 0.5 * thickness;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
@@ -97,7 +97,7 @@ const ParticleBackground = ({ color = "#059669", opacity = 0.3 }) => {
       window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationId);
     };
-  }, [color, opacity]);
+  }, [color, opacity, thickness]);
 
   return <canvas ref={canvasRef} className="particle-canvas" />;
 };

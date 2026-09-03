@@ -33,6 +33,12 @@ const allowedOrigins = [
     .map((origin) => origin.trim())
     .filter(Boolean)
 ];
+
+// Debug logging for CORS configuration
+console.log("CORS Configuration:");
+console.log("CLIENT_URL:", clientUrl);
+console.log("CLIENT_URLS:", process.env.CLIENT_URLS);
+console.log("Allowed Origins:", allowedOrigins);
 const adminEmail = `${process.env.ADMIN_EMAIL || "admin@kerea.org"}`.trim().toLowerCase();
 const adminUsername = process.env.ADMIN_USERNAME || "admin";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-me";
@@ -70,10 +76,13 @@ const normalizeStoredCategories = (submission) => {
 app.use(
   cors({
     origin: allowedOrigins,
-    credentials: false
+    credentials: false,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   })
 );
-app.use(helmet());
+// Temporarily disable helmet to check if it's interfering with CORS
+// app.use(helmet());
 app.use(express.json({ limit: "25mb" }));
 app.use(morgan("dev"));
 

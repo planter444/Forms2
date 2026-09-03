@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-const WriHeroPublic = () => {
+const WriHeroPublic = ({ settings, onScrollToSection }) => {
   const [heroSettings, setHeroSettings] = useState({
     title: "Africa–China Renewable Energy Partnership",
     subtitle: "Connecting Kenya's Renewable Energy Sector with Chinese Technology, Investment and Business Opportunities.",
@@ -41,9 +41,13 @@ const WriHeroPublic = () => {
   }, []);
 
   const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (onScrollToSection) {
+      onScrollToSection(id);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 

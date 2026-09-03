@@ -33,9 +33,7 @@ const WriHeroSettings = ({ token, palette, setNotice, setError }) => {
     loadSettings();
   }, []);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSave = async () => {
     setIsSaving(true);
     
     try {
@@ -113,7 +111,7 @@ const WriHeroSettings = ({ token, palette, setNotice, setError }) => {
   };
 
   return (
-    <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+    <form onSubmit={(e) => e.preventDefault()} className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
       <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Hero Section Settings</h3>
       
       <div className="space-y-4">
@@ -211,7 +209,7 @@ const WriHeroSettings = ({ token, palette, setNotice, setError }) => {
         </div>
         
         <button
-          type="button"
+          type="submit"
           onClick={handleSave}
           disabled={isSaving}
           className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:bg-gray-400"
@@ -220,7 +218,7 @@ const WriHeroSettings = ({ token, palette, setNotice, setError }) => {
           {isSaving ? "Saving..." : "Save Hero Settings"}
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 

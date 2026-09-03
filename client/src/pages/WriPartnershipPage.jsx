@@ -524,7 +524,7 @@ const WriPartnershipPage = () => {
     <div style={{ backgroundColor: "#f0fdf4", color: "#064e3b" }}>
       <WriNav settings={settings} overHero />
 
-      <WriHeroPublic />
+      <WriHeroPublic settings={settings} onScrollToSection={scrollToSection} />
 
       <section id="about" className="py-16 md:py-24 px-4">
         <div className="mx-auto max-w-6xl">

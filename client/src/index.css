@@ -5,6 +5,7 @@
 :root {
   color-scheme: light;
   font-family: Inter, system-ui, sans-serif;
+  --pattern-primary-glow: #059669;
 }
 
 html {
@@ -209,13 +210,15 @@ textarea {
     radial-gradient(circle at 18% 20%, var(--pattern-primary-glow), transparent 18%),
     radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.1), transparent 18%),
     radial-gradient(circle at 55% 78%, var(--pattern-primary-glow), transparent 22%);
+  opacity: 0.3;
 }
 
 .pattern-grid {
   background-image:
-    linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+    linear-gradient(var(--pattern-primary-glow) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pattern-primary-glow) 1px, transparent 1px);
   background-size: 44px 44px;
+  opacity: 0.3;
 }
 
 .pattern-waves {
@@ -223,6 +226,7 @@ textarea {
     radial-gradient(ellipse at 50% 120%, rgba(255, 255, 255, 0.12), transparent 35%),
     radial-gradient(ellipse at 10% 100%, var(--pattern-primary-glow), transparent 30%),
     radial-gradient(ellipse at 90% 100%, var(--pattern-primary-glow), transparent 30%);
+  opacity: 0.3;
 }
 
 .pattern-rings {
@@ -231,11 +235,13 @@ textarea {
     radial-gradient(circle at center, transparent 0 64px, var(--pattern-primary-glow) 64px 66px, transparent 66px);
   background-size: 220px 220px;
   background-position: center;
+  opacity: 0.3;
 }
 
 .pattern-dots {
-  background-image: radial-gradient(rgba(37, 99, 235, 0.14) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(var(--pattern-primary-glow) 1.5px, transparent 1.5px);
   background-size: 28px 28px;
+  opacity: 0.3;
 }
 
 .pattern-mesh {
@@ -243,6 +249,7 @@ textarea {
     linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.08) 20% 22%, transparent 22%),
     linear-gradient(60deg, transparent 35%, var(--pattern-primary-glow) 35% 37%, transparent 37%);
   background-size: 180px 180px;
+  opacity: 0.3;
 }
 
 @keyframes ctaPulse {

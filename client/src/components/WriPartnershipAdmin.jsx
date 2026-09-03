@@ -1279,6 +1279,85 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </div>
             </div>
 
+            <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Background Patterns</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={wriSettings.patterns?.enabled !== false}
+                      onChange={(e) => setWriSettings({
+                        ...wriSettings,
+                        patterns: {
+                          ...wriSettings.patterns,
+                          enabled: e.target.checked
+                        }
+                      })}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium" style={{ color: palette.textColor }}>Enable Background Patterns</span>
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Style</label>
+                  <select
+                    value={wriSettings.patterns?.style || "orbs"}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        style: e.target.value
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  >
+                    <option value="orbs">Orbs</option>
+                    <option value="grid">Grid</option>
+                    <option value="waves">Waves</option>
+                    <option value="rings">Rings</option>
+                    <option value="dots">Dots</option>
+                    <option value="mesh">Mesh</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Color</label>
+                  <input
+                    type="color"
+                    value={wriSettings.patterns?.color || "#059669"}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        color: e.target.value
+                      }
+                    })}
+                    className="w-full h-10 rounded-xl border px-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Opacity</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={wriSettings.patterns?.opacity || 30}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        opacity: parseInt(e.target.value)
+                      }
+                    })}
+                    className="w-full"
+                  />
+                  <div className="text-xs mt-1" style={{ color: palette.textColor }}>Opacity: {wriSettings.patterns?.opacity || 30}%</div>
+                </div>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={handleSaveWriSettings}

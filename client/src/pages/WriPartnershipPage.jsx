@@ -649,6 +649,21 @@ const WriPartnershipPage = () => {
 
   return (
     <div style={{ color: "#064e3b" }}>
+      {settings?.patterns?.enabled !== false && (
+        <div 
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            opacity: (settings?.patterns?.opacity || 30) / 100
+          }}
+        >
+          <div 
+            className={`w-full h-full pattern-${settings?.patterns?.style || 'orbs'} pattern-animate`}
+            style={{
+              '--pattern-primary-glow': settings?.patterns?.color || "#059669"
+            }}
+          />
+        </div>
+      )}
       <WriNav settings={settings} overHero={overHero} />
 
       <section 

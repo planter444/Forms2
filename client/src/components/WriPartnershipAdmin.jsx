@@ -1799,7 +1799,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No lead scores yet. Click "Recalculate" on any business to generate scores.</p>
               )}
             </div>
-          </div>
         </div>
       )}
 
@@ -1862,7 +1861,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No match recommendations yet. Select a business and click "Generate Matches".</p>
               )}
             </div>
-          </div>
         </div>
       )}
 

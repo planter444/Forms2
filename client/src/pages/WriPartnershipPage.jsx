@@ -100,7 +100,7 @@ const AnimatedSection = ({ children, settings, id, className = "" }) => {
   }
 
   return (
-    <section id={id} className={className} style={{ scrollMarginTop: "80px" }}>
+    <section id={id} className={className} style={{ scrollMarginTop: "80px", scrollBehavior: "smooth" }}>
       <div
         ref={ref}
         className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
@@ -112,9 +112,9 @@ const AnimatedSection = ({ children, settings, id, className = "" }) => {
   );
 };
 
-const StaggeredItem = ({ children, settings, index, className = "" }) => {
+const StaggeredItem = ({ children, settings, index, className = "", enabled = true }) => {
   const [ref, inView] = useScrollReveal();
-  const animationEnabled = settings?.animation?.enabled !== false;
+  const animationEnabled = enabled && settings?.animation?.enabled !== false;
   const isMobile = window.innerWidth < 768;
   const animationConfig = isMobile ? settings?.animation?.mobile : settings?.animation?.desktop;
   const animationStyle = animationConfig?.style || "fade-up";
@@ -142,13 +142,6 @@ const StaggeredItem = ({ children, settings, index, className = "" }) => {
 };
 
 const AboutSection = ({ settings }) => {
-  const [ref, inView] = useScrollReveal();
-  const animationEnabled = settings?.animation?.enabled !== false;
-  const isMobile = window.innerWidth < 768;
-  const animationConfig = isMobile ? settings?.animation?.mobile : settings?.animation?.desktop;
-  const animationStyle = animationConfig?.style || "fade-up";
-  const animationDuration = animationConfig?.duration || (isMobile ? 500 : 600);
-
   const items = [
     "Kenya–China B2B linkages",
     "Technology transfer",
@@ -160,11 +153,7 @@ const AboutSection = ({ settings }) => {
   ];
 
   return (
-    <div
-      ref={ref}
-      className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
-      style={{ transitionDuration: `${animationDuration}ms` }}
-    >
+    <div>
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>About the Partnership</h2>
         <p className="mt-4 text-lg max-w-3xl mx-auto" style={{ color: "#065f46" }}>
@@ -196,8 +185,11 @@ const AboutSection = ({ settings }) => {
           ];
           const shape = shapes[index % shapes.length];
 
+          // Only apply staggered animation to first 4 cards
+          const useStaggered = index < 4;
+
           return (
-            <StaggeredItem key={index} settings={settings} index={index}>
+            <StaggeredItem key={index} settings={settings} index={index} enabled={useStaggered}>
               <div className={`border p-4 shadow-sm ${shape}`} style={{ backgroundColor: color.bg, borderColor: color.border }}>
                 <p className="font-medium" style={{ color: color.text }}>{item}</p>
               </div>

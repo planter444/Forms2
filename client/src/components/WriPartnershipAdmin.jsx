@@ -219,7 +219,12 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     }
   };
 
-  const handleSaveWriSettings = async () => {
+  const handleSaveWriSettings = async (event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       console.log("Saving WRI settings:", wriSettings);
       let imageUrl = wriSettings.hero?.backgroundImageUrl || "";
@@ -786,7 +791,11 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
             </div>
             <button
               type="button"
-              onClick={handleSaveWriSettings}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSaveWriSettings(e);
+              }}
               className="w-full rounded-lg py-2 text-sm font-semibold text-white"
               style={{ backgroundColor: palette.primary }}
             >

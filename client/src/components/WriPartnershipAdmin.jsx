@@ -1185,14 +1185,37 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     value={wriSettings.animation?.desktop?.stagger || 100}
                     onChange={(e) => setWriSettings({
                       ...wriSettings,
-                      animation: { 
-                        ...wriSettings.animation, 
+                      animation: {
+                        ...wriSettings.animation,
                         desktop: { ...wriSettings.animation?.desktop, stagger: parseInt(e.target.value) || 100 }
                       }
                     })}
                     className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
                     style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
                   />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Card Animation Delay (About & B2B sections)</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Card Stagger Delay (ms)</label>
+                  <input
+                    type="number"
+                    value={wriSettings.animation?.cardStaggerDelay || 500}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: {
+                        ...wriSettings.animation,
+                        cardStaggerDelay: parseInt(e.target.value) || 500
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                  <p className="text-xs mt-1" style={{ color: palette.textColor }}>Delay between card appearances in About Partnership and B2B Opportunities sections (default: 500ms)</p>
                 </div>
               </div>
             </div>
@@ -1206,8 +1229,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     value={wriSettings.animation?.mobile?.style || "fade-up"}
                     onChange={(e) => setWriSettings({
                       ...wriSettings,
-                      animation: { 
-                        ...wriSettings.animation, 
+                      animation: {
+                        ...wriSettings.animation,
                         mobile: { ...wriSettings.animation?.mobile, style: e.target.value }
                       }
                     })}
@@ -1228,8 +1251,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     value={wriSettings.animation?.mobile?.duration || 500}
                     onChange={(e) => setWriSettings({
                       ...wriSettings,
-                      animation: { 
-                        ...wriSettings.animation, 
+                      animation: {
+                        ...wriSettings.animation,
                         mobile: { ...wriSettings.animation?.mobile, duration: parseInt(e.target.value) || 500 }
                       }
                     })}
@@ -1244,8 +1267,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     value={wriSettings.animation?.mobile?.stagger || 50}
                     onChange={(e) => setWriSettings({
                       ...wriSettings,
-                      animation: { 
-                        ...wriSettings.animation, 
+                      animation: {
+                        ...wriSettings.animation,
                         mobile: { ...wriSettings.animation?.mobile, stagger: parseInt(e.target.value) || 50 }
                       }
                     })}

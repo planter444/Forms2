@@ -117,14 +117,14 @@ const AnimatedSection = ({ children, settings, id, className = "", style = {} })
   );
 };
 
-const StaggeredItem = ({ children, settings, index, className = "", enabled = true }) => {
+const StaggeredItem = ({ children, settings, index, className = "", enabled = true, customStaggerDelay = null }) => {
   const [ref, inView] = useScrollReveal();
   const animationEnabled = enabled && settings?.animation?.enabled !== false;
   const isMobile = window.innerWidth < 768;
   const animationConfig = isMobile ? settings?.animation?.mobile : settings?.animation?.desktop;
   const animationStyle = animationConfig?.style || "fade-up";
   const animationDuration = animationConfig?.duration || (isMobile ? 500 : 600);
-  const staggerDelay = animationConfig?.stagger || 500; // Half-second delay by default
+  const staggerDelay = customStaggerDelay !== null ? customStaggerDelay : (animationConfig?.stagger || 500);
   const delay = index * staggerDelay;
 
   if (!animationEnabled) {
@@ -179,7 +179,7 @@ const AboutSection = ({ settings }) => {
           const color = colors[index % colors.length];
 
           return (
-            <StaggeredItem key={index} settings={settings} index={index} enabled={true}>
+            <StaggeredItem key={index} settings={settings} index={index} enabled={true} customStaggerDelay={settings?.animation?.cardStaggerDelay || 500}>
               <div className="border p-6 shadow-sm rounded-2xl" style={{ backgroundColor: color.bg, borderColor: color.border }}>
                 <p className="font-medium" style={{ color: color.text }}>{item}</p>
               </div>
@@ -828,7 +828,7 @@ const WriPartnershipPage = () => {
               };
 
               return (
-                <StaggeredItem key={area.id} settings={settings} index={index}>
+                <StaggeredItem key={area.id} settings={settings} index={index} enabled={false}>
                   <div className="rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all hover:scale-105 flex flex-col" style={{ backgroundColor: color.bg, borderColor: color.border, minHeight: "200px" }}>
                     <div className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'} md:justify-start`} style={{ color: color.text }}>
                       {getIcon(area.title)}
@@ -853,7 +853,7 @@ const WriPartnershipPage = () => {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {b2bOpportunities.map((opportunity, index) => (
-              <StaggeredItem key={index} settings={settings} index={index} enabled={true}>
+              <StaggeredItem key={index} settings={settings} index={index} enabled={true} customStaggerDelay={settings?.animation?.cardStaggerDelay || 500}>
                 <div className="flex items-center space-x-3 rounded-2xl bg-white p-4 shadow-sm hover:shadow-md transition-all">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full text-white font-bold text-lg" style={{ backgroundColor: "#059669" }}>
                     {index + 1}
@@ -879,7 +879,7 @@ const WriPartnershipPage = () => {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {events.map((event, index) => (
-                <StaggeredItem key={event.id} settings={settings} index={index}>
+                <StaggeredItem key={event.id} settings={settings} index={index} enabled={false}>
                   <div className="rounded-2xl border bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col" style={{ borderColor: "#a7f3d0", minHeight: "350px" }}>
                     <div className="h-48 flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: "#f0fdf4" }}>
                       {event.image_url ? (
@@ -970,7 +970,7 @@ const WriPartnershipPage = () => {
                 });
 
                 return Object.entries(groupedQuestions).map(([sectionNum, questions]) => (
-                  <StaggeredItem key={`section-${sectionNum}`} settings={settings} index={parseInt(sectionNum) - 1}>
+                  <StaggeredItem key={`section-${sectionNum}`} settings={settings} index={parseInt(sectionNum) - 1} enabled={false}>
                     <div className="rounded-2xl border p-6" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
                       <h3 className="text-xl font-semibold mb-4" style={{ color: "#064e3b" }}>Section {sectionNum}</h3>
                       <div className="space-y-4">
@@ -1108,7 +1108,7 @@ const WriPartnershipPage = () => {
                 </div>
               )}
 
-              <StaggeredItem settings={settings} index={4}>
+              <StaggeredItem settings={settings} index={4} enabled={false}>
                 <button
                 type="submit"
                 disabled={surveySubmitting}
@@ -1201,7 +1201,7 @@ const WriPartnershipPage = () => {
             <div className="relative overflow-hidden">
               <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                 {partners.map((partner, index) => (
-                  <StaggeredItem key={partner.id} settings={settings} index={index}>
+                  <StaggeredItem key={partner.id} settings={settings} index={index} enabled={false}>
                     <div className="flex-shrink-0 w-64 snap-center rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all flex flex-col items-center justify-center text-center" style={{ backgroundColor: "#ffffff", borderColor: "#a7f3d0" }}>
                       <div className="h-24 w-24 flex items-center justify-center rounded-full" style={{ backgroundColor: "#f0fdf4" }}>
                         {partner.logo_url ? (
@@ -1246,7 +1246,7 @@ const WriPartnershipPage = () => {
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
               {resources.map((resource, index) => (
-                <StaggeredItem key={resource.id} settings={settings} index={index}>
+                <StaggeredItem key={resource.id} settings={settings} index={index} enabled={false}>
                   <div className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-lg transition-all" style={{ borderColor: "#a7f3d0" }}>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

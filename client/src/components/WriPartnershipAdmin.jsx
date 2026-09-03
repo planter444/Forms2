@@ -1534,7 +1534,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               )}
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {businesses.map((business) => (
+              {businesses && Array.isArray(businesses) && businesses.map((business) => (
                 <div key={business.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
                   <div className="flex items-start justify-between">
                     <div>
@@ -1584,7 +1584,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               >
                 <option value="">Select Business</option>
-                {businesses.map(business => (
+                {businesses && Array.isArray(businesses) && businesses.map(business => (
                   <option key={business.id} value={business.id}>{business.company}</option>
                 ))}
               </select>
@@ -1642,7 +1642,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {leadStatus.map((status) => (
+              {leadStatus && Array.isArray(leadStatus) && leadStatus.map((status) => (
                 <div key={status.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
                   <div className="flex items-start justify-between">
                     <div>
@@ -1664,6 +1664,9 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   </div>
                 </div>
               ))}
+              {(!leadStatus || leadStatus.length === 0) && (
+                <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No lead status records yet. Select a business to update its status.</p>
+              )}
             </div>
           </div>
         </div>
@@ -1681,7 +1684,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               >
                 <option value="">Select Business</option>
-                {businesses.map(business => (
+                {businesses && Array.isArray(businesses) && businesses.map(business => (
                   <option key={business.id} value={business.id}>{business.company}</option>
                 ))}
               </select>
@@ -1732,7 +1735,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {leadActivities.map((activity) => (
+              {leadActivities && Array.isArray(leadActivities) && leadActivities.map((activity) => (
                 <div key={activity.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
                   <div className="flex items-start justify-between">
                     <div>
@@ -1749,6 +1752,9 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   </div>
                 </div>
               ))}
+              {(!leadActivities || leadActivities.length === 0) && (
+                <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No activities logged yet. Select a business and log an activity.</p>
+              )}
             </div>
           </div>
         </div>
@@ -1758,7 +1764,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
           <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Lead Scores</h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {leadScores.map((score) => (
+            {leadScores && Array.isArray(leadScores) && leadScores.map((score) => (
               <div key={score.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
                 <div className="flex items-start justify-between">
                   <div>
@@ -1787,9 +1793,11 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+              {(!leadScores || leadScores.length === 0) && (
+                <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No lead scores yet. Click "Recalculate" on any business to generate scores.</p>
+              )}
+            </div>
         </div>
       )}
 
@@ -1807,13 +1815,13 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
             >
               <option value="">Select Business to Generate Matches</option>
-              {businesses.map(business => (
+              {businesses && Array.isArray(businesses) && businesses.map(business => (
                 <option key={business.id} value={business.id}>{business.company}</option>
               ))}
             </select>
           </div>
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {matchRecommendations.map((match) => (
+            {matchRecommendations && Array.isArray(matchRecommendations) && matchRecommendations.map((match) => (
               <div key={match.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
                 <div className="flex items-start justify-between">
                   <div>
@@ -1822,7 +1830,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </p>
                     <p className="text-sm" style={{ color: palette.mutedTextColor }}>Match Score: {match.match_score}/100</p>
                     <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
-                      {match.match_reasons.join(', ')}
+                      {Array.isArray(match.match_reasons) ? match.match_reasons.join(', ') : match.match_reasons}
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -1847,9 +1855,11 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+              {(!matchRecommendations || matchRecommendations.length === 0) && (
+                <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No match recommendations yet. Select a business and click "Generate Matches".</p>
+              )}
+            </div>
         </div>
       )}
 

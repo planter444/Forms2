@@ -969,7 +969,7 @@ router.delete("/admin/resources/:id", async (req, res) => {
 router.get("/admin/lead-status", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT ls.*, b.name as business_name, b.company as company_name
+      SELECT ls.*, b.name as business_name
       FROM wri_lead_status ls
       JOIN wri_businesses b ON ls.business_id = b.id
       ORDER BY ls.next_follow_up_date ASC NULLS LAST, ls.updated_at DESC
@@ -1071,7 +1071,7 @@ router.post("/admin/lead-activities", async (req, res) => {
 router.get("/admin/lead-scores", async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT ls.*, b.name as business_name, b.company as company_name
+      SELECT ls.*, b.name as business_name
       FROM wri_lead_scores ls
       JOIN wri_businesses b ON ls.business_id = b.id
       ORDER BY ls.total_score DESC
@@ -1116,8 +1116,8 @@ router.get("/admin/match-recommendations", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT mr.*, 
-             b1.name as business_name_1, b1.company as company_name_1,
-             b2.name as business_name_2, b2.company as company_name_2
+             b1.name as business_name_1,
+             b2.name as business_name_2
       FROM wri_match_recommendations mr
       JOIN wri_businesses b1 ON mr.business_id_1 = b1.id
       JOIN wri_businesses b2 ON mr.business_id_2 = b2.id
@@ -1135,8 +1135,8 @@ router.get("/admin/match-recommendations/:businessId", async (req, res) => {
     const { businessId } = req.params;
     const result = await pool.query(`
       SELECT mr.*, 
-             b1.name as business_name_1, b1.company as company_name_1,
-             b2.name as business_name_2, b2.company as company_name_2
+             b1.name as business_name_1,
+             b2.name as business_name_2
       FROM wri_match_recommendations mr
       JOIN wri_businesses b1 ON mr.business_id_1 = b1.id
       JOIN wri_businesses b2 ON mr.business_id_2 = b2.id

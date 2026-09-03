@@ -510,6 +510,7 @@ const WriPartnershipPage = () => {
   const [surveySuccess, setSurveySuccess] = useState(false);
   const [surveyStarted, setSurveyStarted] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [surveyQuestions, setSurveyQuestions] = useState([]);
   const [businessFilters, setBusinessFilters] = useState({
     country: "",
     technology: "",
@@ -568,6 +569,13 @@ const WriPartnershipPage = () => {
     fetchBusinesses(businessFilters);
   }, [businessFilters]);
 
+  useEffect(() => {
+    fetchEvents();
+    fetchPartners();
+    fetchResources();
+    fetchSurveyQuestions();
+  }, []);
+
   const fetchBusinesses = async (filters = {}) => {
     try {
       const params = new URLSearchParams(filters);
@@ -606,6 +614,16 @@ const WriPartnershipPage = () => {
       setResources(data);
     } catch (error) {
       console.error("Error fetching resources:", error);
+    }
+  };
+
+  const fetchSurveyQuestions = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/public/survey-questions`);
+      const data = await response.json();
+      setSurveyQuestions(data);
+    } catch (error) {
+      console.error("Error fetching survey questions:", error);
     }
   };
 
@@ -753,7 +771,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-4 py-2 md:px-6 md:py-3 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+              className="px-4 py-2 md:px-8 md:py-4 mx-auto md:mx-0 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669", maxWidth: "70%", width: "auto" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
@@ -977,7 +995,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
+      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-4xl">
           {!surveyStarted ? (
             <div className="text-center">
@@ -1516,7 +1534,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="business-database" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
+      <AnimatedSection id="business-database" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Business Database</h2>

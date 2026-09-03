@@ -2042,7 +2042,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                             }}
                             className="text-xs text-blue-600 hover:underline"
                           >
-                            Edit
+                            View
                           </button>
                           <button
                             type="button"

@@ -123,6 +123,7 @@ PORT=10000
 DATABASE_URL=your-supabase-connection-string
 DATABASE_SSL=true
 CLIENT_URL=https://your-netlify-site.netlify.app
+CLIENT_URLS=https://your-netlify-site.netlify.app
 ADMIN_EMAIL=your-admin-email@example.com
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=use-a-strong-password
@@ -188,7 +189,7 @@ For the current live deployment, use these exact values:
 ```env
 # Render backend
 CLIENT_URL=https://ussd.kerea.org
-CLIENT_URLS=https://ussd.kerea.org,https://kereaussd.netlify.app
+CLIENT_URLS=https://ussd.kerea.org,https://kereaussd.netlify.app,https://kereaforms.netlify.app
 
 # Netlify frontend
 VITE_API_URL=https://kerea-listing-api.onrender.com
@@ -347,6 +348,7 @@ PORT=10000
 DATABASE_URL=your-supabase-connection-string
 DATABASE_SSL=true
 CLIENT_URL=https://your-netlify-site.netlify.app
+CLIENT_URLS=https://your-netlify-site.netlify.app
 ADMIN_EMAIL=your-admin-email@example.com
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=use-a-strong-password

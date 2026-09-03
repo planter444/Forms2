@@ -1115,8 +1115,9 @@ const WriPartnershipPage = () => {
                   </div>
                 </div>
               </div>
+              </StaggeredItem>
 
-              <StaggeredItem settings={settings} index={3}>
+              <StaggeredItem settings={settings} index={4}>
                 <div className="rounded-2xl border p-6" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
                   <h3 className="text-xl font-semibold mb-4" style={{ color: "#064e3b" }}>Section 4: Future Collaboration Opportunities</h3>
                   <div className="space-y-4">
@@ -1175,8 +1176,10 @@ const WriPartnershipPage = () => {
                   </div>
                 </div>
               </div>
+              </StaggeredItem>
 
-              <button
+              <StaggeredItem settings={settings} index={4}>
+                <button
                 type="submit"
                 disabled={surveySubmitting}
                 className="w-full rounded-full py-3 text-lg font-semibold text-white disabled:opacity-50 transition hover:scale-105"
@@ -1184,6 +1187,7 @@ const WriPartnershipPage = () => {
               >
                 {surveySubmitting ? "Submitting..." : "Submit Survey"}
               </button>
+              </StaggeredItem>
             </form>
           )}
         </div>

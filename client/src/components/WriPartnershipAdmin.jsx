@@ -1992,6 +1992,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b" style={{ borderColor: palette.borderColor }}>
+                    <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>#</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Company</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Contact</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Email</th>
@@ -2001,8 +2002,9 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {surveyResponses.map((response) => (
+                  {surveyResponses.map((response, index) => (
                     <tr key={response.id} className="border-b" style={{ borderColor: palette.borderColor }}>
+                      <td className="px-4 py-2" style={{ color: palette.textColor }}>{index + 1}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.company_name}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.contact_person}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.email}</td>
@@ -2067,12 +2069,16 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
           <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Survey Questions</h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-medium mb-3" style={{ color: palette.textColor }}>
+                {editingItem ? "Edit Question" : "Add New Question"}
+              </h4>
+              <div className="grid grid-cols-2 gap-4">
               <input
                 type="number"
                 placeholder="Section Order"
                 value={surveyQuestionForm.section_order}
-                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, section_order: parseInt(e.target.value) })}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, section_order: parseInt(e.target.value) || 1 })}
                 className="rounded-lg border px-3 py-2 text-sm"
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               />
@@ -2080,7 +2086,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 type="number"
                 placeholder="Question Order"
                 value={surveyQuestionForm.question_order}
-                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_order: parseInt(e.target.value) })}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_order: parseInt(e.target.value) || 1 })}
                 className="rounded-lg border px-3 py-2 text-sm"
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
               />
@@ -2105,6 +2111,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               <option value="radio">Radio (Single Choice)</option>
               <option value="checkbox">Checkbox (Multiple Choice)</option>
               <option value="textarea">Textarea</option>
+              <option value="scale">Scale (1-10)</option>
             </select>
             {(surveyQuestionForm.question_type === "radio" || surveyQuestionForm.question_type === "checkbox") && (
               <div>
@@ -2117,6 +2124,12 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   className="w-full rounded-lg border px-3 py-2 text-sm"
                   style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
                 />
+              </div>
+            )}
+            {surveyQuestionForm.question_type === "scale" && (
+              <div>
+                <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Scale Range</label>
+                <p className="text-xs" style={{ color: palette.mutedTextColor }}>1 (Lowest) to 10 (Highest)</p>
               </div>
             )}
             <label className="flex items-center gap-2">
@@ -2156,7 +2169,28 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
             )}
           </div>
           <div className="mt-6">
-            <h4 className="text-md font-medium mb-3" style={{ color: palette.textColor }}>Existing Questions</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-md font-medium" style={{ color: palette.textColor }}>Existing Questions</h4>
+              {!editingItem && (
+                <button
+                  onClick={() => {
+                    setEditingItem(null);
+                    setSurveyQuestionForm({
+                      section_order: 1,
+                      question_order: 1,
+                      question_text: "",
+                      question_type: "text",
+                      options: [],
+                      required: false
+                    });
+                  }}
+                  className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+                  style={{ backgroundColor: palette.primary }}
+                >
+                  Add New Question
+                </button>
+              )}
+            </div>
             <div className="space-y-2">
               {surveyQuestions.map((question, index) => {
                 // Calculate real question number (1-15)

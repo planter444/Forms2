@@ -618,12 +618,12 @@ const WriPartnershipPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...surveyForm,
-          nature_of_business_other: surveyForm.nature_of_business.includes("Other") ? otherInputs.nature_of_business_other : "",
-          technologies_other: surveyForm.technologies.includes("Other") ? otherInputs.technologies_other : "",
-          collaboration_types_other: surveyForm.collaboration_types.includes("Other") ? otherInputs.collaboration_types_other : "",
-          challenges_other: surveyForm.challenges.includes("Other") ? otherInputs.challenges_other : "",
-          support_needed_other: surveyForm.support_needed.includes("Other") ? otherInputs.support_needed_other : "",
-          interested_activities_other: surveyForm.interested_activities.includes("Other") ? otherInputs.interested_activities_other : ""
+          nature_of_business_other: otherInputs.nature_of_business_other || "",
+          technologies_other: otherInputs.technologies_other || "",
+          collaboration_types_other: otherInputs.collaboration_types_other || "",
+          challenges_other: otherInputs.challenges_other || "",
+          support_needed_other: otherInputs.support_needed_other || "",
+          interested_activities_other: otherInputs.interested_activities_other || ""
         })
       });
 
@@ -754,7 +754,7 @@ const WriPartnershipPage = () => {
                 }
               }}
               className="px-4 py-2 md:px-6 md:py-3 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
-              style={{ backgroundColor: "#ffffff", color: "#059669" }}
+              style={{ backgroundColor: "#ffffff", color: "#059669", maxWidth: "70%", width: "auto" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
             </button>
@@ -1454,7 +1454,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ecfdf5" }} settings={settings}>
+      <AnimatedSection id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Resources</h2>

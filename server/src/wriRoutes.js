@@ -452,7 +452,13 @@ router.put("/admin/survey-responses/:id", async (req, res) => {
       support_needed,
       future_interest,
       interested_activities,
-      additional_comments
+      additional_comments,
+      nature_of_business_other,
+      technologies_other,
+      collaboration_types_other,
+      challenges_other,
+      support_needed_other,
+      interested_activities_other
     } = req.body;
 
     const result = await pool.query(
@@ -461,8 +467,10 @@ router.put("/admin/survey-responses/:id", async (req, res) => {
            nature_of_business = $6, technologies = $7, engages_chinese_partners = $8, 
            collaboration_types = $9, engagement_duration = $10, challenges = $11, 
            support_needed = $12, future_interest = $13, interested_activities = $14, 
-           additional_comments = $15, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $16 RETURNING *`,
+           additional_comments = $15, nature_of_business_other = $16, technologies_other = $17,
+           collaboration_types_other = $18, challenges_other = $19, support_needed_other = $20,
+           interested_activities_other = $21, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $22 RETURNING *`,
       [
         company_name,
         contact_person,
@@ -479,6 +487,12 @@ router.put("/admin/survey-responses/:id", async (req, res) => {
         future_interest,
         interested_activities || [],
         additional_comments || "",
+        nature_of_business_other || "",
+        technologies_other || "",
+        collaboration_types_other || "",
+        challenges_other || "",
+        support_needed_other || "",
+        interested_activities_other || "",
         id
       ]
     );

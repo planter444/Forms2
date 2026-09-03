@@ -400,6 +400,45 @@ export const initializeDatabase = async () => {
         ON wri_survey_questions (section_order, question_order);
     `);
 
+    // Seed default survey questions if table is empty
+    const surveyQuestionsCount = await pool.query("SELECT COUNT(*) FROM wri_survey_questions");
+    if (parseInt(surveyQuestionsCount.rows[0].count) === 0) {
+      console.log("Seeding default survey questions...");
+      const defaultQuestions = [
+        // Section 1: Company Information
+        { section_order: 1, question_order: 1, question_text: "Company Name", question_type: "text", options: [], required: true },
+        { section_order: 1, question_order: 2, question_text: "Contact Person Name", question_type: "text", options: [], required: true },
+        { section_order: 1, question_order: 3, question_text: "Position/Title", question_type: "text", options: [], required: true },
+        { section_order: 1, question_order: 4, question_text: "Email Address", question_type: "email", options: [], required: true },
+        { section_order: 1, question_order: 5, question_text: "Phone Number", question_type: "tel", options: [], required: true },
+        { section_order: 1, question_order: 6, question_text: "Nature of Business (Select all that apply)", question_type: "checkbox", options: ["Manufacturing", "Distribution / Supply", "Installation / EPC", "Financing / Investment", "Consultancy", "Research & Innovation", "Product Development", "Importation", "Other"], required: true },
+        { section_order: 1, question_order: 7, question_text: "Renewable Energy Technologies (Select all that apply)", question_type: "checkbox", options: ["Solar PV", "Solar Water Heating", "Clean Cooking", "Biogas", "Mini-grids", "Energy Storage (Battery Systems)", "E-mobility", "Productive Use of Renewable Energy (PURE)", "Energy Efficiency", "Cross-cutting / Multiple Technologies", "Other"], required: true },
+        
+        // Section 2: Current Engagement with Chinese Partners
+        { section_order: 2, question_order: 1, question_text: "Does your organization currently engage with Chinese companies or institutions?", question_type: "radio", options: ["Yes", "No", "Planning to"], required: true },
+        { section_order: 2, question_order: 2, question_text: "Collaboration Types (Select all that apply)", question_type: "checkbox", options: ["Trade and Import", "Technology Transfer", "Joint Ventures", "Investment Partnerships", "R&D Collaboration", "Training and Skills Development", "Market Expansion", "Other"], required: false },
+        { section_order: 2, question_order: 3, question_text: "How long has your organization been engaging with Chinese partners?", question_type: "radio", options: ["Less than 1 year", "1-3 years", "4-7 years", "Over 7 years"], required: true },
+        
+        // Section 3: Challenges and Support Needs
+        { section_order: 3, question_order: 1, question_text: "What are the key challenges your organization faces when engaging with Chinese partners? (Select all that apply)", question_type: "checkbox", options: ["Language barriers", "Limited access to trusted partners", "Financing constraints", "Import/logistics challenges", "Regulatory barriers", "Quality assurance concerns", "Limited market information", "Cultural/business practice differences", "Communication delays", "Other"], required: true },
+        { section_order: 3, question_order: 2, question_text: "What support would you like KEREA to provide? (Select all that apply)", question_type: "checkbox", options: ["B2B matchmaking", "Trade mission coordination", "Business networking events", "Investment linkages", "Policy advocacy", "Technical training", "Market intelligence", "Supplier verification", "Translation/interpreter support", "Regulatory guidance", "Access to financing opportunities", "Other"], required: true },
+        
+        // Section 4: Future Collaboration Opportunities
+        { section_order: 4, question_order: 1, question_text: "Would your organization be interested in participating in future Kenya–China B2B engagements organized by KEREA?", question_type: "radio", options: ["Yes", "No", "Maybe"], required: true },
+        { section_order: 4, question_order: 2, question_text: "Which of the following Kenya–China business engagement activities would your organization be interested in participating in? (Select all that apply)", question_type: "checkbox", options: ["Trade fairs", "Virtual B2B meetings", "Investor forums", "Site visits", "Product exhibitions", "Technical workshops", "Joint pilot projects", "Other"], required: true },
+        { section_order: 4, question_order: 3, question_text: "Please share any additional comments, recommendations, or partnership interests", question_type: "textarea", options: [], required: true }
+      ];
+
+      for (const question of defaultQuestions) {
+        await pool.query(
+          `INSERT INTO wri_survey_questions (section_order, question_order, question_text, question_type, options, required)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [question.section_order, question.question_order, question.question_text, question.question_type, question.options, question.required]
+        );
+      }
+      console.log("Default survey questions seeded successfully");
+    }
+
     await pool.query(`
       ALTER TABLE wri_survey_responses
       ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;

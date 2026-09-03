@@ -753,7 +753,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-6 py-3 md:px-8 md:py-4 md:w-auto rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+              className="px-4 py-2 md:px-6 md:py-3 md:w-auto rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}

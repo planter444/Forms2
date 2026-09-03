@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import WriHeroSettings from "./WriHeroSettings.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -708,108 +709,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       {activeSubTab === "hero" && (
-        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
-          <h3 className="text-lg font-semibold" style={{ color: palette.textColor }}>Hero Section</h3>
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Title</label>
-              <input
-                type="text"
-                value={wriSettings.hero?.title || ""}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, title: e.target.value } })}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Subtitle</label>
-              <textarea
-                value={wriSettings.hero?.subtitle || ""}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, subtitle: e.target.value } })}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                rows={2}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Introduction</label>
-              <textarea
-                value={wriSettings.hero?.introduction || ""}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, introduction: e.target.value } })}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                rows={3}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Primary CTA Button Text</label>
-              <input
-                type="text"
-                value={wriSettings.hero?.primaryCta || ""}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, primaryCta: e.target.value } })}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Secondary CTA Button Text</label>
-              <input
-                type="text"
-                value={wriSettings.hero?.secondaryCta || ""}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, secondaryCta: e.target.value } })}
-                className="w-full rounded-lg border px-3 py-2 text-sm"
-                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Background Image</label>
-              <div className="space-y-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
-                  className="w-full text-sm"
-                />
-                <input
-                  type="url"
-                  value={wriSettings.hero?.backgroundImageUrl || ""}
-                  onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, backgroundImageUrl: e.target.value } })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                  placeholder="Or enter image URL"
-                />
-                {wriSettings.hero?.backgroundImageUrl && (
-                  <img src={wriSettings.hero.backgroundImageUrl} alt="Preview" className="h-32 w-full object-cover rounded-lg" />
-                )}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Overlay Opacity ({Math.round((wriSettings.hero?.overlayOpacity ?? 0.3) * 100)}%)</label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                className="w-full"
-                value={wriSettings.hero?.overlayOpacity ?? 0.3}
-                onChange={(e) => setWriSettings({ ...wriSettings, hero: { ...wriSettings.hero, overlayOpacity: Number(e.target.value) } })}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={(e) => {
-                console.log("Save Hero Settings button clicked");
-                e.preventDefault();
-                e.stopPropagation();
-                handleSaveWriSettings(e);
-              }}
-              className="w-full rounded-lg py-2 text-sm font-semibold text-white"
-              style={{ backgroundColor: palette.primary }}
-            >
-              Save Hero Settings
-            </button>
-          </div>
-        </div>
+        <WriHeroSettings token={token} palette={palette} setNotice={setNotice} setError={setError} />
       )}
 
       {activeSubTab === "enquiries" && (

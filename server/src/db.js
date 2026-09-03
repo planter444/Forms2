@@ -471,6 +471,7 @@ export const initializeDatabase = async () => {
         challenges_other TEXT DEFAULT '',
         support_needed_other TEXT DEFAULT '',
         interested_activities_other TEXT DEFAULT '',
+        responses_jsonb JSONB DEFAULT '{}',
         submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );

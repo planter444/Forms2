@@ -606,10 +606,23 @@ const WriPartnershipPage = () => {
     e.preventDefault();
     setSurveySubmitting(true);
     try {
+      // Extract dynamic question responses for JSONB storage
+      const responsesJsonb = {};
+      Object.keys(surveyForm).forEach(key => {
+        if (key.startsWith('question_')) {
+          responsesJsonb[key] = surveyForm[key];
+        }
+      });
+
+      const payload = {
+        ...surveyForm,
+        responses_jsonb: responsesJsonb
+      };
+
       const response = await fetch(`${API_URL}/api/wri/survey`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(surveyForm)
+        body: JSON.stringify(payload)
       });
 
       if (response.ok) {
@@ -868,7 +881,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
+      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Events</h2>
@@ -961,116 +974,150 @@ const WriPartnershipPage = () => {
               </div>
 
               <form onSubmit={handleSurveySubmit} className="space-y-8">
-              {surveyQuestions && surveyQuestions.length > 0 ? (
-                surveyQuestions.map((question, index) => (
-                  <StaggeredItem key={question.id} settings={settings} index={index}>
+              {surveyQuestions && surveyQuestions.length > 0 ? (() => {
+                // Group questions by section_order
+                const groupedQuestions = {};
+                surveyQuestions.forEach(q => {
+                  if (!groupedQuestions[q.section_order]) {
+                    groupedQuestions[q.section_order] = [];
+                  }
+                  groupedQuestions[q.section_order].push(q);
+                });
+
+                return Object.entries(groupedQuestions).map(([sectionNum, questions]) => (
+                  <StaggeredItem key={`section-${sectionNum}`} settings={settings} index={parseInt(sectionNum) - 1}>
                     <div className="rounded-2xl border p-6" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
+                      <h3 className="text-xl font-semibold mb-4" style={{ color: "#064e3b" }}>Section {sectionNum}</h3>
                       <div className="space-y-4">
-                        <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>
-                          {index + 1}. {question.question_text} {question.required && "*"}
-                        </label>
-                        {question.question_type === "text" && (
-                          <input
-                            type="text"
-                            required={question.required}
-                            value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2"
-                            style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                          />
-                        )}
-                        {question.question_type === "email" && (
-                          <input
-                            type="email"
-                            required={question.required}
-                            value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2"
-                            style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                          />
-                        )}
-                        {question.question_type === "tel" && (
-                          <input
-                            type="tel"
-                            required={question.required}
-                            value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2"
-                            style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                          />
-                        )}
-                        {question.question_type === "textarea" && (
-                          <textarea
-                            required={question.required}
-                            value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2"
-                            style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
-                            rows={3}
-                          />
-                        )}
-                        {question.question_type === "radio" && (
-                          <div className="space-y-2">
-                            {question.options.map((option, optIndex) => (
-                              <label key={optIndex} className="flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
-                                <input
-                                  type="radio"
-                                  name={`question_${question.id}`}
-                                  required={question.required}
-                                  checked={surveyForm[`question_${question.id}`] === option}
-                                  onChange={() => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: option })}
-                                />
-                                {option}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                        {question.question_type === "checkbox" && (
-                          <div className="space-y-2">
-                            {question.options.map((option, optIndex) => (
-                              <label key={optIndex} className="flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
-                                <input
-                                  type="checkbox"
-                                  checked={Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`].includes(option) : false}
-                                  onChange={() => {
-                                    const currentValues = Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`] : [];
-                                    if (currentValues.includes(option)) {
-                                      setSurveyForm({ ...surveyForm, [`question_${question.id}`]: currentValues.filter(v => v !== option) });
-                                    } else {
-                                      setSurveyForm({ ...surveyForm, [`question_${question.id}`]: [...currentValues, option] });
-                                    }
-                                  }}
-                                />
-                                {option}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                        {question.question_type === "scale" && (
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-4">
-                              <span className="text-sm" style={{ color: "#065f46" }}>1 (Lowest)</span>
+                        {questions.map((question, qIndex) => (
+                          <div key={question.id}>
+                            <label className="block text-sm font-medium mb-2" style={{ color: "#064e3b" }}>
+                              {question.question_text} {question.required && "*"}
+                            </label>
+                            {question.question_type === "text" && (
                               <input
-                                type="range"
-                                min="1"
-                                max="10"
+                                type="text"
                                 required={question.required}
-                                value={surveyForm[`question_${question.id}`] || 5}
-                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: parseInt(e.target.value) })}
-                                className="flex-1"
+                                value={surveyForm[`question_${question.id}`] || ""}
+                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                                className="w-full rounded-lg border px-3 py-2"
+                                style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
                               />
-                              <span className="text-sm" style={{ color: "#065f46" }}>10 (Highest)</span>
-                            </div>
-                            <div className="text-center font-bold" style={{ color: "#064e3b" }}>
-                              {surveyForm[`question_${question.id}`] || 5}
-                            </div>
+                            )}
+                            {question.question_type === "email" && (
+                              <input
+                                type="email"
+                                required={question.required}
+                                value={surveyForm[`question_${question.id}`] || ""}
+                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                                className="w-full rounded-lg border px-3 py-2"
+                                style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                              />
+                            )}
+                            {question.question_type === "tel" && (
+                              <input
+                                type="tel"
+                                required={question.required}
+                                value={surveyForm[`question_${question.id}`] || ""}
+                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                                className="w-full rounded-lg border px-3 py-2"
+                                style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                              />
+                            )}
+                            {question.question_type === "textarea" && (
+                              <textarea
+                                required={question.required}
+                                value={surveyForm[`question_${question.id}`] || ""}
+                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                                className="w-full rounded-lg border px-3 py-2"
+                                style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                                rows={3}
+                              />
+                            )}
+                            {question.question_type === "radio" && (
+                              <div className="space-y-2">
+                                {question.options.map((option, optIndex) => (
+                                  <label key={optIndex} className="flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
+                                    <input
+                                      type="radio"
+                                      name={`question_${question.id}`}
+                                      required={question.required}
+                                      checked={surveyForm[`question_${question.id}`] === option}
+                                      onChange={() => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: option })}
+                                    />
+                                    {option}
+                                  </label>
+                                ))}
+                                {surveyForm[`question_${question.id}`] === "Other" && (
+                                  <textarea
+                                    placeholder="Please specify"
+                                    value={surveyForm[`question_${question.id}_other`] || ""}
+                                    onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}_other`]: e.target.value })}
+                                    className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                                    style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                                    rows={2}
+                                  />
+                                )}
+                              </div>
+                            )}
+                            {question.question_type === "checkbox" && (
+                              <div className="space-y-2">
+                                {question.options.map((option, optIndex) => (
+                                  <label key={optIndex} className="flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`].includes(option) : false}
+                                      onChange={() => {
+                                        const currentValues = Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`] : [];
+                                        if (currentValues.includes(option)) {
+                                          setSurveyForm({ ...surveyForm, [`question_${question.id}`]: currentValues.filter(v => v !== option) });
+                                        } else {
+                                          setSurveyForm({ ...surveyForm, [`question_${question.id}`]: [...currentValues, option] });
+                                        }
+                                      }}
+                                    />
+                                    {option}
+                                  </label>
+                                ))}
+                                {Array.isArray(surveyForm[`question_${question.id}`]) && surveyForm[`question_${question.id}`].includes("Other") && (
+                                  <textarea
+                                    placeholder="Please specify"
+                                    value={surveyForm[`question_${question.id}_other`] || ""}
+                                    onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}_other`]: e.target.value })}
+                                    className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
+                                    style={{ borderColor: "#a7f3d0", backgroundColor: "#ffffff" }}
+                                    rows={2}
+                                  />
+                                )}
+                              </div>
+                            )}
+                            {question.question_type === "scale" && (
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-4">
+                                  <span className="text-sm" style={{ color: "#065f46" }}>1 (Lowest)</span>
+                                  <input
+                                    type="range"
+                                    min="1"
+                                    max="10"
+                                    required={question.required}
+                                    value={surveyForm[`question_${question.id}`] || 5}
+                                    onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: parseInt(e.target.value) })}
+                                    className="flex-1"
+                                  />
+                                  <span className="text-sm" style={{ color: "#065f46" }}>10 (Highest)</span>
+                                </div>
+                                <div className="text-center font-bold" style={{ color: "#064e3b" }}>
+                                  {surveyForm[`question_${question.id}`] || 5}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        ))}
                       </div>
                     </div>
                   </StaggeredItem>
-                ))
-              ) : (
+                ));
+              })() : (
                 <div className="text-center py-8" style={{ color: "#065f46" }}>
                   Loading survey questions...
                 </div>
@@ -1127,7 +1174,7 @@ const WriPartnershipPage = () => {
       )}
 
       {settings?.support?.enabled !== false && (
-        <AnimatedSection id="support" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
+        <AnimatedSection id="support" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Need Support?</h2>
@@ -1201,7 +1248,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
+      <AnimatedSection id="resources" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Resources</h2>

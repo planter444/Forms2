@@ -2569,6 +2569,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Contact</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Email</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Engages Chinese Partners</th>
+                    <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Dynamic Responses</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Submitted At</th>
                     <th className="px-4 py-2 text-left font-medium" style={{ color: palette.textColor }}>Actions</th>
                   </tr>
@@ -2581,6 +2582,17 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.contact_person}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.email}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.engages_chinese_partners}</td>
+                      <td className="px-4 py-2" style={{ color: palette.textColor }}>
+                        {response.responses_jsonb ? (
+                          <div className="text-xs">
+                            {Object.entries(response.responses_jsonb).map(([key, value]) => (
+                              <div key={key}>
+                                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(', ') : String(value)}
+                              </div>
+                            ))}
+                          </div>
+                        ) : '-'}
+                      </td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{new Date(response.submitted_at).toLocaleDateString()}</td>
                       <td className="px-4 py-2">
                         <div className="flex gap-2">
@@ -2609,7 +2621,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                                 collaboration_types_other: response.collaboration_types_other || "",
                                 challenges_other: response.challenges_other || "",
                                 support_needed_other: response.support_needed_other || "",
-                                interested_activities_other: response.interested_activities_other || ""
+                                interested_activities_other: response.interested_activities_other || "",
+                                ...(response.responses_jsonb || {})
                               });
                             }}
                             className="text-xs text-blue-600 hover:underline"

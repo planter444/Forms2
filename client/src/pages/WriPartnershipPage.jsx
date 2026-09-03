@@ -658,7 +658,7 @@ const WriPartnershipPage = () => {
   };
 
   return (
-    <div style={{ backgroundColor: "#f0fdf4", color: "#064e3b" }}>
+    <div style={{ color: "#064e3b" }}>
       <WriNav settings={settings} overHero={overHero} />
 
       <section 

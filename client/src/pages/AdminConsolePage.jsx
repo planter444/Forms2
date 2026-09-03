@@ -168,6 +168,9 @@ const createEditorState = (settings) => ({
   pattern: settings.theme.pattern,
   patternsEnabled: settings.theme.patternsEnabled,
   patternMotion: settings.theme.patternMotion,
+  particlesEnabled: settings.theme.particlesEnabled ?? true,
+  particleColor: settings.theme.particleColor || "#059669",
+  particleOpacity: settings.theme.particleOpacity || 30,
   mobileBackgroundStyle: settings.theme.mobileBackgroundStyle || settings.theme.backgroundStyle,
   desktopBackgroundStyle: settings.theme.desktopBackgroundStyle || settings.theme.backgroundStyle,
   mobilePattern: settings.theme.mobilePattern || settings.theme.pattern,
@@ -822,6 +825,9 @@ const AdminConsolePage = () => {
         pattern: editorState.pattern,
         patternsEnabled: editorState.patternsEnabled,
         patternMotion: editorState.patternMotion,
+        particlesEnabled: editorState.particlesEnabled,
+        particleColor: editorState.particleColor,
+        particleOpacity: editorState.particleOpacity,
         mobileBackgroundStyle: editorState.mobileBackgroundStyle,
         desktopBackgroundStyle: editorState.desktopBackgroundStyle,
         mobilePattern: editorState.mobilePattern,
@@ -1581,6 +1587,7 @@ const AdminConsolePage = () => {
                     {[
                       ["patternsEnabled", "Enable background patterns"],
                       ["patternMotion", "Animate patterns"],
+                      ["particlesEnabled", "Enable particle animation"],
                       ["ctaPulse", "Pulse the start-form CTA"]
                     ].map(([field, label]) => (
                       <label key={field} className="flex items-center justify-between rounded-2xl border px-4 py-3 text-sm" style={{ borderColor: palette.borderColor, color: palette.textColor }}>
@@ -1588,6 +1595,34 @@ const AdminConsolePage = () => {
                         <input type="checkbox" checked={editorState[field]} onChange={(event) => applyEditorChange(field, event.target.checked)} />
                       </label>
                     ))}
+                    <label className="block text-sm font-medium" style={{ color: palette.textColor }}>
+                      Particle color
+                      <div className="mt-2 flex items-center gap-3 rounded-2xl border px-4 py-3" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+                        <input
+                          type="color"
+                          value={editorState.particleColor || "#059669"}
+                          onChange={(e) => applyEditorChange("particleColor", e.target.value)}
+                          className="h-8 w-12 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={editorState.particleColor || "#059669"}
+                          onChange={(e) => applyEditorChange("particleColor", e.target.value)}
+                          className="flex-1 bg-transparent outline-none"
+                        />
+                      </div>
+                    </label>
+                    <label className="block text-sm font-medium" style={{ color: palette.textColor }}>
+                      Particle opacity ({editorState.particleOpacity || 30}%)
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        className="mt-2 w-full"
+                        value={editorState.particleOpacity || 30}
+                        onChange={(e) => applyEditorChange("particleOpacity", parseInt(e.target.value))}
+                      />
+                    </label>
                     <label className="block text-sm font-medium" style={{ color: palette.textColor }}>
                       Form tips layout
                       <select value={editorState.formTipsLayout} onChange={(event) => applyEditorChange("formTipsLayout", event.target.value)} className="mt-2 w-full rounded-2xl border px-4 py-3 outline-none" style={{ borderColor: palette.borderColor }}>

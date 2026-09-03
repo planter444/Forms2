@@ -241,8 +241,51 @@ router.post("/survey", async (req, res) => {
       responses_jsonb
     } = req.body;
 
-    if (!company_name || !contact_person || !position || !email || !phone || !engages_chinese_partners || !engagement_duration || !future_interest) {
-      return res.status(400).json({ error: "Missing required fields" });
+    // For new dynamic surveys, all data is in responses_jsonb
+    // Extract from responses_jsonb if old fields are not provided
+    let finalCompanyName = company_name;
+    let finalContactPerson = contact_person;
+    let finalPosition = position;
+    let finalEmail = email;
+    let finalPhone = phone;
+    let finalNatureOfBusiness = nature_of_business;
+    let finalTechnologies = technologies;
+    let finalEngagesChinesePartners = engages_chinese_partners;
+    let finalCollaborationTypes = collaboration_types;
+    let finalEngagementDuration = engagement_duration;
+    let finalChallenges = challenges;
+    let finalSupportNeeded = support_needed;
+    let finalFutureInterest = future_interest;
+    let finalInterestedActivities = interested_activities;
+    let finalAdditionalComments = additional_comments;
+
+    // Extract from responses_jsonb if provided
+    if (responses_jsonb && Object.keys(responses_jsonb).length > 0) {
+      Object.entries(responses_jsonb).forEach(([key, value]) => {
+        if (key.includes('company_name') && !finalCompanyName) finalCompanyName = value;
+        if (key.includes('contact_person') && !finalContactPerson) finalContactPerson = value;
+        if (key.includes('position') && !finalPosition) finalPosition = value;
+        if (key.includes('email') && !finalEmail) finalEmail = value;
+        if (key.includes('phone') && !finalPhone) finalPhone = value;
+        if (key.includes('nature_of_business') && !finalNatureOfBusiness) finalNatureOfBusiness = value;
+        if (key.includes('technologies') && !finalTechnologies) finalTechnologies = value;
+        if (key.includes('engages_chinese_partners') && !finalEngagesChinesePartners) finalEngagesChinesePartners = value;
+        if (key.includes('collaboration_types') && !finalCollaborationTypes) finalCollaborationTypes = value;
+        if (key.includes('engagement_duration') && !finalEngagementDuration) finalEngagementDuration = value;
+        if (key.includes('challenges') && !finalChallenges) finalChallenges = value;
+        if (key.includes('support_needed') && !finalSupportNeeded) finalSupportNeeded = value;
+        if (key.includes('future_interest') && !finalFutureInterest) finalFutureInterest = value;
+        if (key.includes('interested_activities') && !finalInterestedActivities) finalInterestedActivities = value;
+        if (key.includes('additional_comments') && !finalAdditionalComments) finalAdditionalComments = value;
+      });
+    }
+
+    // Accept submission if responses_jsonb has data, even if old fields are missing
+    if (!responses_jsonb || Object.keys(responses_jsonb).length === 0) {
+      // Old format validation
+      if (!finalCompanyName || !finalContactPerson || !finalPosition || !finalEmail || !finalPhone || !finalEngagesChinesePartners || !finalEngagementDuration || !finalFutureInterest) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
     }
 
     const result = await pool.query(
@@ -251,21 +294,21 @@ router.post("/survey", async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
        RETURNING *`,
       [
-        company_name,
-        contact_person,
-        position,
-        email,
-        phone,
-        nature_of_business || [],
-        technologies || [],
-        engages_chinese_partners,
-        collaboration_types || [],
-        engagement_duration,
-        challenges || [],
-        support_needed || [],
-        future_interest,
-        interested_activities || [],
-        additional_comments || "",
+        finalCompanyName || "",
+        finalContactPerson || "",
+        finalPosition || "",
+        finalEmail || "",
+        finalPhone || "",
+        Array.isArray(finalNatureOfBusiness) ? finalNatureOfBusiness : [],
+        Array.isArray(finalTechnologies) ? finalTechnologies : [],
+        finalEngagesChinesePartners || "",
+        Array.isArray(finalCollaborationTypes) ? finalCollaborationTypes : [],
+        finalEngagementDuration || "",
+        Array.isArray(finalChallenges) ? finalChallenges : [],
+        Array.isArray(finalSupportNeeded) ? finalSupportNeeded : [],
+        finalFutureInterest || "",
+        Array.isArray(finalInterestedActivities) ? finalInterestedActivities : [],
+        finalAdditionalComments || "",
         responses_jsonb || {}
       ]
     );

@@ -614,8 +614,8 @@ const WriPartnershipPage = () => {
         }
       });
 
+      // For new dynamic survey, only send responses_jsonb
       const payload = {
-        ...surveyForm,
         responses_jsonb: responsesJsonb
       };
 
@@ -630,6 +630,9 @@ const WriPartnershipPage = () => {
         setShowSuccessPopup(true);
         setSurveyForm({});
         setOtherInputs({});
+      } else {
+        const errorData = await response.json();
+        console.error("Survey submission error:", errorData);
       }
     } catch (error) {
       console.error("Error submitting survey:", error);
@@ -881,7 +884,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
+      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Events</h2>

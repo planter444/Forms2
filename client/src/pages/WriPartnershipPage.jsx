@@ -160,7 +160,7 @@ const AboutSection = ({ settings }) => {
           The Kenya–China Renewable Energy Partnership focuses on strengthening collaboration across key areas:
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item, index) => {
           const colors = [
             { bg: "#f0fdf4", border: "#a7f3d0", text: "#065f46" },

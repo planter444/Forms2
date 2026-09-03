@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import ParticleBackground from "../components/ParticleBackground";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -650,19 +651,10 @@ const WriPartnershipPage = () => {
   return (
     <div style={{ color: "#064e3b" }}>
       {settings?.patterns?.enabled !== false && (
-        <div 
-          className="fixed inset-0 pointer-events-none z-0"
-          style={{
-            opacity: (settings?.patterns?.opacity || 30) / 100
-          }}
-        >
-          <div 
-            className={`w-full h-full pattern-${settings?.patterns?.style || 'orbs'} pattern-animate`}
-            style={{
-              '--pattern-primary-glow': settings?.patterns?.color || "#059669"
-            }}
-          />
-        </div>
+        <ParticleBackground 
+          color={settings?.patterns?.color || "#059669"}
+          opacity={(settings?.patterns?.opacity || 30) / 100}
+        />
       )}
       <WriNav settings={settings} overHero={overHero} />
 

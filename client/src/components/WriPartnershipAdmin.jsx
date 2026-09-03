@@ -1280,7 +1280,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
             </div>
 
             <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
-              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Background Patterns</h4>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Particle Animation</h4>
               <div className="space-y-3">
                 <div>
                   <label className="flex items-center gap-2">
@@ -1296,33 +1296,11 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       })}
                       className="rounded"
                     />
-                    <span className="text-sm font-medium" style={{ color: palette.textColor }}>Enable Background Patterns</span>
+                    <span className="text-sm font-medium" style={{ color: palette.textColor }}>Enable Particle Animation</span>
                   </label>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Style</label>
-                  <select
-                    value={wriSettings.patterns?.style || "orbs"}
-                    onChange={(e) => setWriSettings({
-                      ...wriSettings,
-                      patterns: {
-                        ...wriSettings.patterns,
-                        style: e.target.value
-                      }
-                    })}
-                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
-                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
-                  >
-                    <option value="orbs">Orbs</option>
-                    <option value="grid">Grid</option>
-                    <option value="waves">Waves</option>
-                    <option value="rings">Rings</option>
-                    <option value="dots">Dots</option>
-                    <option value="mesh">Mesh</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Color</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Particle Color</label>
                   <input
                     type="color"
                     value={wriSettings.patterns?.color || "#059669"}
@@ -1338,7 +1316,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Pattern Opacity</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Particle Opacity</label>
                   <input
                     type="range"
                     min="0"

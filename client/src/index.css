@@ -1,0 +1,502 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(31, 157, 92, 0.18);
+}
+
+.cta-pulse {
+  animation: ctaPulse 1.8s ease-in-out infinite;
+}
+
+.motion-pulse {
+  animation: ctaPulse 1.8s ease-in-out infinite;
+}
+
+.motion-float {
+  animation: motionFloat 4s ease-in-out infinite;
+}
+
+.motion-shake {
+  animation: motionShake 2.8s ease-in-out infinite;
+}
+
+.motion-breathe {
+  animation: motionBreathe 3.2s ease-in-out infinite;
+}
+
+.motion-rise {
+  animation: motionRise 0.75s ease-out both;
+}
+
+.motion-stagger > * {
+  animation: motionRise 0.7s ease-out both;
+}
+
+.motion-stagger > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.motion-stagger > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.page-load-fade {
+  animation: pageLoadFade 0.42s ease-out both;
+}
+
+.page-load-pop {
+  animation: pageLoadPop 0.46s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.page-load-bounce {
+  animation: pageLoadBounce 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.page-load-rotate {
+  animation: pageLoadRotate 0.48s ease-out both;
+  transform-origin: center top;
+}
+
+.page-load-shake {
+  animation: pageLoadShake 0.5s ease-out both;
+}
+
+.field-trace {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--trace-fill), var(--trace-fill)) padding-box,
+    conic-gradient(
+      from var(--trace-angle, 0deg),
+      transparent 0deg,
+      transparent 170deg,
+      color-mix(in srgb, var(--trace-accent, var(--trace-color)) 68%, white) 210deg,
+      var(--trace-color) 255deg,
+      color-mix(in srgb, var(--trace-color) 82%, var(--trace-accent, var(--trace-color))) 318deg,
+      transparent 350deg,
+      transparent 360deg
+    ) border-box;
+  animation: traceSpin 1.9s linear infinite;
+}
+
+.cta-trace {
+  border: 3px solid transparent;
+  background:
+    linear-gradient(var(--cta-fill), var(--cta-fill)) padding-box,
+    conic-gradient(
+      from var(--trace-angle, 0deg),
+      var(--trace-color) 0deg,
+      var(--trace-accent, var(--trace-color)) 72deg,
+      transparent 118deg,
+      transparent 168deg,
+      var(--trace-color) 220deg,
+      var(--trace-accent, var(--trace-color)) 292deg,
+      transparent 338deg,
+      transparent 360deg
+    ) border-box;
+  animation: traceSpin 1.15s linear infinite;
+  position: relative;
+  isolation: isolate;
+}
+
+.cta-trace::after {
+  border: 1px solid color-mix(in srgb, var(--trace-color) 72%, white);
+  border-radius: inherit;
+  content: "";
+  inset: 3px;
+  opacity: 0.55;
+  pointer-events: none;
+  position: absolute;
+}
+
+.hero-cta-border-trace {
+  animation: traceSpin 0.95s linear infinite;
+  background:
+    linear-gradient(var(--cta-fill), var(--cta-fill)) padding-box,
+    conic-gradient(
+      from var(--trace-angle, 0deg),
+      transparent 0deg,
+      transparent 38deg,
+      rgba(255, 255, 255, 0.78) 58deg,
+      #ffffff 82deg,
+      #ffffff 142deg,
+      rgba(255, 255, 255, 0.78) 164deg,
+      transparent 190deg,
+      transparent 360deg
+    ) border-box;
+  border: 4px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 12px 35px var(--cta-glow, rgba(255, 255, 255, 0.22));
+}
+
+.hero-cta-border-trace::before {
+  display: none;
+}
+
+.hero-cta-border-trace::after {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .field-trace,
+  .cta-trace {
+    border-width: 3px;
+  }
+}
+
+.pattern-surface {
+  opacity: 0.95;
+}
+
+.pattern-surface-soft {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 32%),
+    linear-gradient(135deg, var(--surface-page), var(--surface-page-alt));
+}
+
+.pattern-surface-glow {
+  background:
+    radial-gradient(circle at 20% 20%, var(--pattern-primary-glow), transparent 28%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.72), transparent 24%),
+    linear-gradient(135deg, var(--surface-page), var(--surface-muted));
+}
+
+.pattern-surface-contrast {
+  background:
+    linear-gradient(135deg, var(--surface-page-alt), var(--surface-muted)),
+    linear-gradient(45deg, var(--pattern-primary-glow), transparent 40%);
+}
+
+.pattern-layer {
+  opacity: 0.95;
+}
+
+.pattern-animate {
+  animation: patternDrift 20s linear infinite;
+}
+
+.pattern-orbs {
+  background:
+    radial-gradient(circle at 18% 20%, var(--pattern-primary-glow), transparent 18%),
+    radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.1), transparent 18%),
+    radial-gradient(circle at 55% 78%, var(--pattern-primary-glow), transparent 22%);
+}
+
+.pattern-grid {
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.pattern-waves {
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(255, 255, 255, 0.12), transparent 35%),
+    radial-gradient(ellipse at 10% 100%, var(--pattern-primary-glow), transparent 30%),
+    radial-gradient(ellipse at 90% 100%, var(--pattern-primary-glow), transparent 30%);
+}
+
+.pattern-rings {
+  background-image:
+    radial-gradient(circle at center, transparent 0 28px, rgba(255, 255, 255, 0.08) 28px 30px, transparent 30px),
+    radial-gradient(circle at center, transparent 0 64px, var(--pattern-primary-glow) 64px 66px, transparent 66px);
+  background-size: 220px 220px;
+  background-position: center;
+}
+
+.pattern-dots {
+  background-image: radial-gradient(rgba(37, 99, 235, 0.14) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+}
+
+.pattern-mesh {
+  background:
+    linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.08) 20% 22%, transparent 22%),
+    linear-gradient(60deg, transparent 35%, var(--pattern-primary-glow) 35% 37%, transparent 37%);
+  background-size: 180px 180px;
+}
+
+@keyframes ctaPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.16);
+  }
+
+  50% {
+    transform: scale(1.035);
+    box-shadow: 0 0 0 16px rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes motionFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes motionShake {
+  0%,
+  100% {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+
+  20% {
+    transform: rotate(-0.7deg) translate3d(-2px, 0, 0);
+  }
+
+  40% {
+    transform: rotate(0.7deg) translate3d(2px, 0, 0);
+  }
+
+  60% {
+    transform: rotate(-0.35deg) translate3d(-1px, 0, 0);
+  }
+}
+
+@keyframes motionBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes motionRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pageLoadFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pageLoadPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pageLoadBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+
+  62% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pageLoadRotate {
+  from {
+    opacity: 0;
+    transform: rotate(-1.6deg) translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes pageLoadShake {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  35% {
+    opacity: 1;
+    transform: translateX(8px);
+  }
+
+  70% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes patternDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-1.5%, 1%, 0) scale(1.03);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@property --trace-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes traceSpin {
+  from {
+    --trace-angle: 0deg;
+  }
+
+  to {
+    --trace-angle: 360deg;
+  }
+}
+
+@keyframes heroCtaSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Step content transition */
+@keyframes stepSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-enter {
+  animation: stepSlideIn 0.38s ease-out both;
+}
+
+/* Success page celebration */
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes successConfetti {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-20px) rotate(90deg) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) rotate(240deg) scale(0.6);
+  }
+}
+
+.success-pop {
+  animation: successPop 0.6s ease-out both;
+}
+
+.success-pop-delay {
+  animation: successPop 0.5s ease-out 0.2s both;
+}
+
+/* Mobile CTA border sweep */
+@keyframes ctaBorderSweep {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.cta-border-sweep {
+  animation: ctaBorderSweep 2s ease-in-out infinite;
+}

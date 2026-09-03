@@ -1,0 +1,236 @@
+{
+  "brandName": "Solar Mkononi",
+  "browserTitle": "Solar Mkononi - Renewable Energy at Your Fingertips",
+  "hero": {
+    "headline": "Renewable Energy at Your Fingertips",
+    "description": "Connect with verified renewable energy suppliers, technicians, financial institutions, and innovative clean energy solutions through Solar Mkononi.",
+    "primaryCta": "Explore Services",
+    "primaryCtaHref": "#services",
+    "secondaryCta": "Access USSD Platform",
+    "secondaryCtaHref": "#ussd",
+    "backgroundType": "image",
+    "backgroundUrl": "",
+    "videoUrl": "",
+    "enabled": true
+  },
+  "stats": {
+    "enabled": true,
+    "items": [
+      {
+        "label": "Verified Suppliers",
+        "value": "500+"
+      },
+      {
+        "label": "Solar Installers",
+        "value": "200+"
+      },
+      {
+        "label": "Financial Institutions",
+        "value": "50+"
+      },
+      {
+        "label": "Counties Covered",
+        "value": "47"
+      },
+      {
+        "label": "Registered Users",
+        "value": "10,000+"
+      }
+    ]
+  },
+  "services": {
+    "enabled": true,
+    "title": "Our Services",
+    "description": "Comprehensive renewable energy solutions for Kenya",
+    "cards": [
+      {
+        "title": "Solar Suppliers",
+        "description": "Access verified solar panel and equipment suppliers across Kenya",
+        "icon": "sun"
+      },
+      {
+        "title": "Solar Installers",
+        "description": "Connect with certified solar installation professionals",
+        "icon": "wrench"
+      },
+      {
+        "title": "Solar Financing",
+        "description": "Find financial institutions offering solar financing options",
+        "icon": "bank"
+      },
+      {
+        "title": "Biodigester Suppliers",
+        "description": "Get biodigester systems from trusted suppliers",
+        "icon": "leaf"
+      },
+      {
+        "title": "Biodigester Financing",
+        "description": "Financing options for biodigester installations",
+        "icon": "coins"
+      },
+      {
+        "title": "Bio-Slurry Suppliers",
+        "description": "Connect with bio-slurry suppliers for organic farming",
+        "icon": "droplet"
+      }
+    ]
+  },
+  "howItWorks": {
+    "enabled": true,
+    "title": "How It Works",
+    "steps": [
+      {
+        "title": "Access Platform",
+        "description": "Dial *789*788# to access the USSD platform from any mobile phone",
+        "icon": "phone"
+      },
+      {
+        "title": "Find Services",
+        "description": "Browse and search for renewable energy services in your area",
+        "icon": "search"
+      },
+      {
+        "title": "Connect with Providers",
+        "description": "Get contact details and connect directly with verified providers",
+        "icon": "link"
+      },
+      {
+        "title": "Grow with Renewable Energy",
+        "description": "Access clean energy solutions and grow your business or home",
+        "icon": "growth"
+      }
+    ]
+  },
+  "ussd": {
+    "enabled": true,
+    "title": "Access via USSD",
+    "description": "No internet? No problem. Access our platform directly from your mobile phone",
+    "dialCode": "*789*788#",
+    "instructions": [
+      "Open your phone's dialer",
+      "Enter *789*788#",
+      "Press the call button",
+      "Follow the menu prompts"
+    ],
+    "screenshotUrl": ""
+  },
+  "paygo": {
+    "enabled": true,
+    "title": "PAYGO Solutions",
+    "description": "Pay-as-you-go solar solutions for affordable clean energy access",
+    "items": [
+      {
+        "title": "Solar Pumps",
+        "description": "Affordable solar water pumps for irrigation and domestic use"
+      },
+      {
+        "title": "Solar Lighting",
+        "description": "Pay-as-you-go solar lighting systems for homes and businesses"
+      },
+      {
+        "title": "PAYGO Technology",
+        "description": "Flexible payment plans that make solar accessible to everyone"
+      },
+      {
+        "title": "Clean Cooking",
+        "description": "Coming soon: PAYGO clean cooking solutions"
+      }
+    ]
+  },
+  "resourceLibrary": {
+    "enabled": true,
+    "title": "Resource Library",
+    "description": "Access policies, best practices, and sector guides",
+    "resources": []
+  },
+  "impact": {
+    "enabled": true,
+    "title": "Our Impact",
+    "description": "Transforming lives through renewable energy across Kenya",
+    "stories": [
+      {
+        "title": "Lighting Up Rural Kenya",
+        "description": "How solar solutions are bringing electricity to remote communities",
+        "imageUrl": ""
+      },
+      {
+        "title": "Empowering Women Entrepreneurs",
+        "description": "Supporting women-led renewable energy businesses",
+        "imageUrl": ""
+      },
+      {
+        "title": "Sustainable Agriculture",
+        "description": "Biodigesters and bio-slurry transforming farming practices",
+        "imageUrl": ""
+      }
+    ]
+  },
+  "partners": {
+    "enabled": true,
+    "title": "Our Partners",
+    "description": "Working together to accelerate renewable energy adoption",
+    "logos": []
+  },
+  "contact": {
+    "enabled": true,
+    "title": "Get in Touch",
+    "description": "Have questions? We're here to help",
+    "email": "info@solarmkononi.org",
+    "phone": "+254 700 000 000",
+    "address": "Nairobi, Kenya",
+    "formEnabled": true
+  },
+  "footer": {
+    "enabled": true,
+    "title": "Solar Mkononi",
+    "body": "Empowering Kenya with accessible renewable energy solutions",
+    "links": [
+      {
+        "label": "About Us",
+        "href": "#about"
+      },
+      {
+        "label": "Services",
+        "href": "#services"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ],
+    "socialLinks": [],
+    "copyright": "© 2026 Solar Mkononi. All rights reserved."
+  },
+  "branding": {
+    "logoUrl": "",
+    "logoAlt": "Solar Mkononi logo",
+    "faviconUrl": "",
+    "heroBackgroundUrl": "",
+    "bannerUrls": []
+  },
+  "theme": {
+    "palette": "emerald",
+    "primaryColor": "#059669",
+    "secondaryColor": "#10b981",
+    "accentColor": "#d1fae5",
+    "backgroundColor": "#f0fdf4",
+    "textColor": "#064e3b",
+    "mutedTextColor": "#475569",
+    "borderColor": "#a7f3d0",
+    "surfaceBackground": "#ffffff",
+    "surfaceMuted": "#f0fdf4"
+  },
+  "sections": {
+    "hero": true,
+    "stats": true,
+    "services": true,
+    "howItWorks": true,
+    "ussd": true,
+    "paygo": true,
+    "resourceLibrary": true,
+    "impact": true,
+    "partners": true,
+    "contact": true,
+    "footer": true
+  }
+}

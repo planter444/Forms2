@@ -268,7 +268,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       console.log("Save response data:", responseData);
       
       if (response.ok) {
-        setNotice("WRI settings saved successfully");
+        setNotice("Hero settings saved successfully!");
         setHeroImageFile(null);
         // Reload the entire component state
         await fetchWriSettings();
@@ -678,8 +678,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
 
   return (
     <div className="space-y-6" onClick={(e) => {
-      // Prevent any click from bubbling up to potential forms
-      if (e && e.target.closest('button')) {
+      if (e && e.target) {
         e.stopPropagation();
       }
     }}>

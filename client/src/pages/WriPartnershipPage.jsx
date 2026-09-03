@@ -353,10 +353,17 @@ const WriPartnershipPage = () => {
     window.scrollTo(0, 0);
     const loadSettings = async () => {
       try {
+        console.log("Fetching WRI settings from:", `${API_URL}/api/wri/public/settings`);
         const response = await fetch(`${API_URL}/api/wri/public/settings`);
         const data = await response.json();
         console.log("Fetched WRI settings for public page:", data);
-        setSettings(data.wri || {});
+        console.log("Settings.wri:", data.wri);
+        console.log("Settings.hero:", data.wri?.hero);
+        
+        // Handle different response formats
+        const wriData = data.wri || data || {};
+        console.log("Setting WRI data:", wriData);
+        setSettings(wriData);
       } catch (error) {
         console.error("Error loading WRI settings:", error);
       }

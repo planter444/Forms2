@@ -2168,7 +2168,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
             )}
           </div>
-          </div>
           <div className="mt-6">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-md font-medium" style={{ color: palette.textColor }}>Existing Questions</h4>

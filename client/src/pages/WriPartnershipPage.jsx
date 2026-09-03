@@ -677,11 +677,11 @@ const WriPartnershipPage = () => {
         </div>
       </section>
 
-      <section id="about" className="py-16 md:py-24 px-4">
+      <AnimatedSection id="about" className="py-16 md:py-24 px-4" settings={settings}>
         <div className="mx-auto max-w-6xl">
           <AboutSection settings={settings} />
         </div>
-      </section>
+      </AnimatedSection>
 
       <AnimatedSection id="areas" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
@@ -793,7 +793,7 @@ const WriPartnershipPage = () => {
             </div>
           )}
         </div>
-      </section>
+      </AnimatedSection>
 
       <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-4xl">

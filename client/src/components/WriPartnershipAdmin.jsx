@@ -675,7 +675,12 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" onClick={(e) => {
+      // Prevent any click from bubbling up to potential forms
+      if (e && e.target.closest('button')) {
+        e.stopPropagation();
+      }
+    }}>
       <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
         <h2 className="text-2xl font-semibold" style={{ color: palette.textColor }}>Africa–China Renewable Energy Partnership Admin</h2>
         <p className="mt-2 text-sm" style={{ color: palette.mutedTextColor }}>Manage hero content, enquiries, businesses, events, partners, and resources.</p>
@@ -792,6 +797,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
             <button
               type="button"
               onClick={(e) => {
+                console.log("Save Hero Settings button clicked");
                 e.preventDefault();
                 e.stopPropagation();
                 handleSaveWriSettings(e);

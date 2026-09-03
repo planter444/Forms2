@@ -970,10 +970,10 @@ const AdminConsolePage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <button type="button" onClick={handleSaveSettings} disabled={savingSettings} className="rounded-2xl px-5 py-3 text-sm font-semibold text-white disabled:bg-slate-300" style={{ backgroundColor: savingSettings ? "#cbd5e1" : palette.primary }}>
+              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSaveSettings(); }} disabled={savingSettings} className="rounded-2xl px-5 py-3 text-sm font-semibold text-white disabled:bg-slate-300" style={{ backgroundColor: savingSettings ? "#cbd5e1" : palette.primary }}>
                 {savingSettings ? "Saving..." : "Save changes"}
               </button>
-              <button type="button" onClick={handleLogout} className="rounded-2xl border px-5 py-3 text-sm font-semibold" style={{ borderColor: palette.borderColor, color: palette.textColor }}>
+              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleLogout(); }} className="rounded-2xl border px-5 py-3 text-sm font-semibold" style={{ borderColor: palette.borderColor, color: palette.textColor }}>
                 Logout
               </button>
             </div>
@@ -990,7 +990,11 @@ const AdminConsolePage = () => {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveTab(tab.id);
+                  }}
                   className="w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold transition"
                   style={{
                     backgroundColor: activeTab === tab.id ? palette.accent : palette.surfaceBackground,

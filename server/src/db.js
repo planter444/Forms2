@@ -477,6 +477,12 @@ export const initializeDatabase = async () => {
       );
     `);
 
+    // Add responses_jsonb column if it doesn't exist (for existing tables)
+    await pool.query(`
+      ALTER TABLE wri_survey_responses
+      ADD COLUMN IF NOT EXISTS responses_jsonb JSONB DEFAULT '{}';
+    `);
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS wri_survey_questions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

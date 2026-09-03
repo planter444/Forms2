@@ -281,6 +281,7 @@ router.post("/survey", async (req, res) => {
     }
 
     // Accept submission if responses_jsonb has data, even if old fields are missing
+    // If responses_jsonb is empty or missing, validate old fields
     if (!responses_jsonb || Object.keys(responses_jsonb).length === 0) {
       // Old format validation
       if (!finalCompanyName || !finalContactPerson || !finalPosition || !finalEmail || !finalPhone || !finalEngagesChinesePartners || !finalEngagementDuration || !finalFutureInterest) {
@@ -288,25 +289,26 @@ router.post("/survey", async (req, res) => {
       }
     }
 
+    // For dynamic surveys, use placeholder values for NOT NULL columns if they're missing
     const result = await pool.query(
       `INSERT INTO wri_survey_responses
        (company_name, contact_person, position, email, phone, nature_of_business, technologies, engages_chinese_partners, collaboration_types, engagement_duration, challenges, support_needed, future_interest, interested_activities, additional_comments, responses_jsonb)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
        RETURNING *`,
       [
-        finalCompanyName || "",
-        finalContactPerson || "",
-        finalPosition || "",
-        finalEmail || "",
-        finalPhone || "",
+        finalCompanyName || "Dynamic Survey",
+        finalContactPerson || "Dynamic Survey",
+        finalPosition || "Dynamic Survey",
+        finalEmail || "dynamic@survey.local",
+        finalPhone || "0000000000",
         Array.isArray(finalNatureOfBusiness) ? finalNatureOfBusiness : [],
         Array.isArray(finalTechnologies) ? finalTechnologies : [],
-        finalEngagesChinesePartners || "",
+        finalEngagesChinesePartners || "Not specified",
         Array.isArray(finalCollaborationTypes) ? finalCollaborationTypes : [],
-        finalEngagementDuration || "",
+        finalEngagementDuration || "Not specified",
         Array.isArray(finalChallenges) ? finalChallenges : [],
         Array.isArray(finalSupportNeeded) ? finalSupportNeeded : [],
-        finalFutureInterest || "",
+        finalFutureInterest || "Not specified",
         Array.isArray(finalInterestedActivities) ? finalInterestedActivities : [],
         finalAdditionalComments || "",
         responses_jsonb || {}
@@ -316,7 +318,9 @@ router.post("/survey", async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Error creating survey response:", error);
-    res.status(500).json({ error: "Failed to submit survey" });
+    console.error("Error details:", error.message);
+    console.error("Error stack:", error.stack);
+    res.status(500).json({ error: "Failed to submit survey", details: error.message });
   }
 });
 

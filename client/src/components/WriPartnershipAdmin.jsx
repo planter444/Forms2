@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import WriHeroAdminSimple from "./WriHeroAdminSimple.jsx";
+import WriRealHeroAdmin from "./WriRealHeroAdmin.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -689,7 +690,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       <div className="flex gap-2 border-b" style={{ borderColor: palette.borderColor }}>
-        {["hero", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
+        {["hero", "real-hero", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
           <button
             key={tab}
             type="button"
@@ -710,6 +711,10 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
 
       {activeSubTab === "hero" && (
         <WriHeroAdminSimple token={token} palette={palette} setNotice={setNotice} setError={setError} />
+      )}
+
+      {activeSubTab === "real-hero" && (
+        <WriRealHeroAdmin token={token} palette={palette} setNotice={setNotice} setError={setError} />
       )}
 
       {activeSubTab === "enquiries" && (

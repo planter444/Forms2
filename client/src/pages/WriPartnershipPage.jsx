@@ -521,17 +521,17 @@ const WriPartnershipPage = () => {
     <div style={{ backgroundColor: "#f0fdf4", color: "#064e3b" }}>
       <WriNav settings={settings} overHero />
 
-      <section id="hero" className="relative min-h-screen flex flex-col justify-center px-4 overflow-hidden pt-20" style={{ backgroundImage: settings?.hero?.backgroundImageUrl ? `url(${settings?.hero?.backgroundImageUrl})` : "linear-gradient(135deg, #059669 0%, #10b981 50%, #065f46 100%)", backgroundSize: "cover", backgroundPosition: "center" }}>
-        <div className="absolute inset-0" style={{ backgroundColor: `rgba(0, 0, 0, ${settings?.hero?.overlayOpacity ?? 0.3})` }} />
+      <section id="hero" className="relative min-h-screen flex flex-col justify-center px-4 overflow-hidden pt-20" style={{ backgroundImage: settings?.realHero?.realBackgroundImageUrl ? `url(${settings?.realHero?.realBackgroundImageUrl})` : "linear-gradient(135deg, #059669 0%, #10b981 50%, #065f46 100%)", backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="absolute inset-0" style={{ backgroundColor: `rgba(0, 0, 0, ${settings?.realHero?.realOverlayOpacity ?? 0.3})` }} />
         <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 drop-shadow-lg">
-            {settings?.hero?.title || "Africa–China Renewable Energy Partnership"}
+            {settings?.realHero?.realTitle || "Africa–China Renewable Energy Partnership"}
           </h1>
           <p className="text-lg md:text-xl mb-6 max-w-3xl mx-auto drop-shadow-md">
-            {settings?.hero?.subtitle || "Connecting Kenya's Renewable Energy Sector with Chinese Technology, Investment and Business Opportunities."}
+            {settings?.realHero?.realSubtitle || "Connecting Kenya's Renewable Energy Sector with Chinese Technology, Investment and Business Opportunities."}
           </p>
           <p className="text-base md:text-lg mb-10 max-w-3xl mx-auto drop-shadow-md opacity-90">
-            {settings?.hero?.introduction || "A dedicated hub facilitating B2B linkages, partnership enquiries, events, business opportunities, knowledge sharing, and stakeholder engagement between Kenya and China in the renewable energy sector."}
+            {settings?.realHero?.realIntroduction || "A dedicated hub facilitating B2B linkages, partnership enquiries, events, business opportunities, knowledge sharing, and stakeholder engagement between Kenya and China in the renewable energy sector."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -539,13 +539,13 @@ const WriPartnershipPage = () => {
               className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
-              {settings?.hero?.primaryCta || "Make a Partnership Enquiry"}
+              {settings?.realHero?.realPrimaryCta || "Make a Partnership Enquiry"}
             </button>
             <button
               onClick={() => scrollToSection("business-database")}
               className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold border-2 border-white text-white transition hover:scale-105 backdrop-blur-sm"
             >
-              {settings?.hero?.secondaryCta || "Browse Business Database"}
+              {settings?.realHero?.realSecondaryCta || "Browse Business Database"}
             </button>
           </div>
         </div>

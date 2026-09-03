@@ -124,7 +124,7 @@ const StaggeredItem = ({ children, settings, index, className = "", enabled = tr
   const animationConfig = isMobile ? settings?.animation?.mobile : settings?.animation?.desktop;
   const animationStyle = animationConfig?.style || "fade-up";
   const animationDuration = animationConfig?.duration || (isMobile ? 500 : 600);
-  const staggerDelay = animationConfig?.stagger || (isMobile ? 50 : 100);
+  const staggerDelay = animationConfig?.stagger || 500; // Half-second delay by default
   const delay = index * staggerDelay;
 
   if (!animationEnabled) {
@@ -179,9 +179,11 @@ const AboutSection = ({ settings }) => {
           const color = colors[index % colors.length];
 
           return (
-            <div key={index} className="border p-6 shadow-sm rounded-2xl" style={{ backgroundColor: color.bg, borderColor: color.border }}>
-              <p className="font-medium" style={{ color: color.text }}>{item}</p>
-            </div>
+            <StaggeredItem key={index} settings={settings} index={index} enabled={true}>
+              <div className="border p-6 shadow-sm rounded-2xl" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+                <p className="font-medium" style={{ color: color.text }}>{item}</p>
+              </div>
+            </StaggeredItem>
           );
         })}
       </div>
@@ -851,7 +853,7 @@ const WriPartnershipPage = () => {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {b2bOpportunities.map((opportunity, index) => (
-              <StaggeredItem key={index} settings={settings} index={index}>
+              <StaggeredItem key={index} settings={settings} index={index} enabled={true}>
                 <div className="flex items-center space-x-3 rounded-2xl bg-white p-4 shadow-sm hover:shadow-md transition-all">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full text-white font-bold text-lg" style={{ backgroundColor: "#059669" }}>
                     {index + 1}

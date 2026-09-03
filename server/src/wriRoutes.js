@@ -339,7 +339,7 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
     const result = await pool.query("SELECT * FROM wri_survey_responses ORDER BY submitted_at DESC");
     const responses = result.rows;
 
-    // Get survey questions to map IDs to question text
+    // Get survey questions to map IDs to question text and order them
     const questionsResult = await pool.query("SELECT * FROM wri_survey_questions ORDER BY section_order, question_order");
     const questions = questionsResult.rows;
 
@@ -359,27 +359,34 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       { header: "Submitted At", key: "submitted_at", width: 20 }
     ];
 
-    // Collect all dynamic question keys from responses_jsonb
-    const dynamicKeys = new Set();
-    responses.forEach(response => {
-      if (response.responses_jsonb) {
-        Object.keys(response.responses_jsonb).forEach(key => {
-          // Only include question_* keys and *_other keys
-          if (key.startsWith('question_') || key.includes('_other')) {
-            dynamicKeys.add(key);
-          }
+    // Add question columns in order (Q1, Q2, Q3 to last)
+    questions.forEach((q, index) => {
+      const questionKey = `question_${q.id}`;
+      const questionOtherKey = `question_${q.id}_other`;
+
+      // Add main question column
+      columns.push({
+        header: `Q${index + 1}: ${q.question_text}`,
+        key: questionKey,
+        width: 35
+      });
+
+      // Add "Other" column if any response has "Other" selected
+      const hasOther = responses.some(response => {
+        if (response.responses_jsonb) {
+          const value = response.responses_jsonb[questionKey];
+          return Array.isArray(value) ? value.includes("Other") : value === "Other";
+        }
+        return false;
+      });
+
+      if (hasOther) {
+        columns.push({
+          header: `Q${index + 1}: ${q.question_text} (Other)`,
+          key: questionOtherKey,
+          width: 35
         });
       }
-    });
-
-    // Add dynamic question columns with readable headers
-    dynamicKeys.forEach(key => {
-      const headerText = questionMap[key] || key;
-      columns.push({
-        header: headerText,
-        key: key,
-        width: 30
-      });
     });
 
     worksheet.columns = columns;
@@ -391,14 +398,32 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
         submitted_at: response.submitted_at
       };
 
-      // Add dynamic question values
-      if (response.responses_jsonb) {
-        Object.entries(response.responses_jsonb).forEach(([key, value]) => {
-          if (key.startsWith('question_') || key.includes('_other')) {
-            row[key] = Array.isArray(value) ? value.join(', ') : String(value);
+      // Add dynamic question values in order
+      questions.forEach((q, index) => {
+        const questionKey = `question_${q.id}`;
+        const questionOtherKey = `question_${q.id}_other`;
+
+        if (response.responses_jsonb) {
+          const value = response.responses_jsonb[questionKey];
+          const otherValue = response.responses_jsonb[questionOtherKey];
+
+          // Format the main question value
+          if (Array.isArray(value)) {
+            row[questionKey] = value.join(', ');
+          } else if (value !== undefined && value !== null) {
+            row[questionKey] = String(value);
+          } else {
+            row[questionKey] = '';
           }
-        });
-      }
+
+          // Format the "Other" value
+          if (otherValue !== undefined && otherValue !== null) {
+            row[questionOtherKey] = String(otherValue);
+          } else {
+            row[questionOtherKey] = '';
+          }
+        }
+      });
 
       return row;
     });
@@ -413,7 +438,16 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       pattern: 'solid',
       fgColor: { argb: 'FF059669' }
     };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+    headerRow.height = 30;
+
+    // Style data rows
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) {
+        row.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        row.height = 20;
+      }
+    });
 
     // Auto-fit column widths
     worksheet.columns.forEach(column => {
@@ -423,7 +457,7 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
           const value = row[column.key];
           return value ? value.toString().length : 0;
         }));
-        column.width = Math.max(headerWidth, dataWidth) + 2;
+        column.width = Math.max(headerWidth, dataWidth) + 5;
       }
     });
 

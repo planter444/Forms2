@@ -1175,7 +1175,6 @@ const WriPartnershipPage = () => {
                   </div>
                 </div>
               </div>
-              </StaggeredItem>
 
               <button
                 type="submit"

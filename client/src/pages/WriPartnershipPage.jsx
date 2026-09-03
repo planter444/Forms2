@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import WriHeroPublic from "../components/WriHeroPublic.jsx";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -304,6 +303,7 @@ const resourceTypes = [
 
 const WriPartnershipPage = () => {
   const [settings, setSettings] = useState(null);
+  const [overHero, setOverHero] = useState(true);
   const [enquiries, setEnquiries] = useState([]);
   const [businesses, setBusinesses] = useState([]);
   const [events, setEvents] = useState([]);
@@ -371,6 +371,18 @@ const WriPartnershipPage = () => {
     fetchEvents();
     fetchPartners();
     fetchResources();
+
+    // Scroll detection for navigation color change
+    const handleScroll = () => {
+      const heroSection = document.getElementById('hero');
+      if (heroSection) {
+        const heroBottom = heroSection.getBoundingClientRect().bottom;
+        setOverHero(heroBottom > 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -519,7 +531,7 @@ const WriPartnershipPage = () => {
 
   return (
     <div style={{ backgroundColor: "#f0fdf4", color: "#064e3b" }}>
-      <WriNav settings={settings} overHero />
+      <WriNav settings={settings} overHero={overHero} />
 
       <section id="hero" className="relative min-h-screen flex flex-col justify-center px-4 overflow-hidden pt-20" style={{ backgroundImage: settings?.realHero?.realBackgroundImageUrl ? `url(${settings?.realHero?.realBackgroundImageUrl})` : "linear-gradient(135deg, #059669 0%, #10b981 50%, #065f46 100%)", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0" style={{ backgroundColor: `rgba(0, 0, 0, ${settings?.realHero?.realOverlayOpacity ?? 0.3})` }} />

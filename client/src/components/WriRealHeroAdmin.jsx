@@ -10,6 +10,7 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
   const [realSecondaryCta, setRealSecondaryCta] = useState("Browse Business Database");
   const [realBackgroundImageUrl, setRealBackgroundImageUrl] = useState("");
   const [realOverlayOpacity, setRealOverlayOpacity] = useState(0.3);
+  const [realImageFile, setRealImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
   // Load settings on mount
@@ -40,6 +41,30 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
     setIsSaving(true);
     
     try {
+      let imageUrl = realBackgroundImageUrl;
+      
+      // Upload image if file is selected
+      if (realImageFile) {
+        const formData = new FormData();
+        formData.append("file", realImageFile);
+        formData.append("type", "real-hero");
+        
+        const uploadResponse = await fetch(`${API_URL}/api/wri/admin/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          imageUrl = uploadData.url;
+        } else {
+          setError("Failed to upload image");
+          setIsSaving(false);
+          return;
+        }
+      }
+      
       const payload = {
         wri: {
           realHero: {
@@ -48,7 +73,7 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
             realIntroduction,
             realPrimaryCta,
             realSecondaryCta,
-            realBackgroundImageUrl,
+            realBackgroundImageUrl: imageUrl,
             realOverlayOpacity
           }
         }
@@ -65,6 +90,7 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
       
       if (response.ok) {
         setNotice("Real Hero settings saved successfully!");
+        setRealImageFile(null);
       } else {
         setError("Failed to save Real Hero settings");
       }
@@ -137,18 +163,26 @@ const WriRealHeroAdmin = ({ token, palette, setNotice, setError }) => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Background Image URL</label>
-          <input
-            type="url"
-            value={realBackgroundImageUrl}
-            onChange={(e) => setRealBackgroundImageUrl(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
-            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-            placeholder="Enter real background image URL"
-          />
-          {realBackgroundImageUrl && (
-            <img src={realBackgroundImageUrl} alt="Real Preview" className="h-32 w-full object-cover rounded-lg mt-2" />
-          )}
+          <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Real Background Image</label>
+          <div className="space-y-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setRealImageFile(e.target.files?.[0] || null)}
+              className="w-full text-sm"
+            />
+            <input
+              type="url"
+              value={realBackgroundImageUrl}
+              onChange={(e) => setRealBackgroundImageUrl(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 text-sm"
+              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              placeholder="Or enter real background image URL"
+            />
+            {realBackgroundImageUrl && (
+              <img src={realBackgroundImageUrl} alt="Real Preview" className="h-32 w-full object-cover rounded-lg mt-2" />
+            )}
+          </div>
         </div>
         
         <div>

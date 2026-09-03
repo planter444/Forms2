@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { getSolarMkononiSettings } from "../lib/api.js";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -354,12 +353,11 @@ const WriPartnershipPage = () => {
     window.scrollTo(0, 0);
     const loadSettings = async () => {
       try {
-        const data = await getSolarMkononiSettings();
+        const response = await fetch(`${API_URL}/api/wri/public/settings`);
+        const data = await response.json();
         setSettings(data);
       } catch (error) {
-        console.error("Error loading settings:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error loading WRI settings:", error);
       }
     };
     loadSettings();

@@ -1176,9 +1176,9 @@ const WriPartnershipPage = () => {
                   </div>
                 </div>
               </div>
-              </StaggeredItem>
 
-              <button
+              <StaggeredItem settings={settings} index={4}>
+                <button
                 type="submit"
                 disabled={surveySubmitting}
                 className="w-full rounded-full py-3 text-lg font-semibold text-white disabled:opacity-50 transition hover:scale-105"

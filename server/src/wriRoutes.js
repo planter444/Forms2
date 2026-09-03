@@ -339,72 +339,11 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
     const result = await pool.query("SELECT * FROM wri_survey_responses ORDER BY submitted_at DESC");
     const responses = result.rows;
 
-    // Get survey questions for proper column headers
-    const questionsResult = await pool.query("SELECT * FROM wri_survey_questions ORDER BY section_order, question_order");
-    const questions = questionsResult.rows;
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Survey Responses");
 
-    // Build column headers based on questions
+    // Define columns
     const columns = [
-      { header: "ID", key: "id", width: 10 },
-      { header: "Submitted At", key: "submitted_at", width: 20 }
-    ];
-
-    // Add question columns
-    questions.forEach(q => {
-      columns.push({
-        header: `${q.question_text} ${q.required ? '*' : ''}`,
-        key: `q_${q.id}`,
-        width: 30
-      });
-    });
-
-    worksheet.columns = columns;
-
-    // Map responses to question-based format
-    const rows = responses.map(response => {
-      const row = {
-        id: response.id,
-        submitted_at: response.submitted_at
-      };
-
-      // Map field names to questions
-      const fieldMapping = {
-        'company_name': 'Company Name',
-        'contact_person': 'Contact Person',
-        'position': 'Position',
-        'email': 'Email',
-        'phone': 'Phone',
-        'nature_of_business': 'Nature of Business',
-        'technologies': 'Technologies',
-        'engages_chinese_partners': 'Engages Chinese Partners',
-        'collaboration_types': 'Collaboration Types',
-        'engagement_duration': 'Engagement Duration',
-        'challenges': 'Challenges',
-        'support_needed': 'Support Needed',
-        'future_interest': 'Future Interest',
-        'interested_activities': 'Interested Activities',
-        'additional_comments': 'Additional Comments'
-      };
-
-      // For now, use the current field mapping
-      // TODO: Update to use dynamic question mapping once questions are configured
-      Object.keys(fieldMapping).forEach(field => {
-        const value = response[field];
-        if (Array.isArray(value)) {
-          row[field] = value.join(', ');
-        } else {
-          row[field] = value;
-        }
-      });
-
-      return row;
-    });
-
-    // Add all response columns for backward compatibility
-    worksheet.columns = [
       { header: "ID", key: "id", width: 10 },
       { header: "Company Name", key: "company_name", width: 25 },
       { header: "Contact Person", key: "contact_person", width: 20 },
@@ -430,51 +369,25 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       { header: "Submitted At", key: "submitted_at", width: 20 }
     ];
 
-    // Collect all dynamic question keys from responses_jsonb
-    const dynamicKeys = new Set();
-    responses.forEach(response => {
-      if (response.responses_jsonb) {
-        Object.keys(response.responses_jsonb).forEach(key => dynamicKeys.add(key));
-      }
-    });
-
-    // Add dynamic question columns
-    dynamicKeys.forEach(key => {
-      worksheet.columns.push({
-        header: key,
-        key: key,
-        width: 30
-      });
-    });
+    worksheet.columns = columns;
 
     // Convert array fields to comma-separated strings
-    const formattedRows = responses.map(response => {
-      const row = {
-        ...response,
-        nature_of_business: Array.isArray(response.nature_of_business) ? response.nature_of_business.join(', ') : response.nature_of_business,
-        technologies: Array.isArray(response.technologies) ? response.technologies.join(', ') : response.technologies,
-        collaboration_types: Array.isArray(response.collaboration_types) ? response.collaboration_types.join(', ') : response.collaboration_types,
-        challenges: Array.isArray(response.challenges) ? response.challenges.join(', ') : response.challenges,
-        support_needed: Array.isArray(response.support_needed) ? response.support_needed.join(', ') : response.support_needed,
-        interested_activities: Array.isArray(response.interested_activities) ? response.interested_activities.join(', ') : response.interested_activities,
-        // Add "Other" custom text fields
-        nature_of_business_other: response.nature_of_business_other || '',
-        technologies_other: response.technologies_other || '',
-        collaboration_types_other: response.collaboration_types_other || '',
-        challenges_other: response.challenges_other || '',
-        support_needed_other: response.support_needed_other || '',
-        interested_activities_other: response.interested_activities_other || ''
-      };
-
-      // Add dynamic question values
-      if (response.responses_jsonb) {
-        Object.entries(response.responses_jsonb).forEach(([key, value]) => {
-          row[key] = Array.isArray(value) ? value.join(', ') : String(value);
-        });
-      }
-
-      return row;
-    });
+    const formattedRows = responses.map(response => ({
+      ...response,
+      nature_of_business: Array.isArray(response.nature_of_business) ? response.nature_of_business.join(', ') : response.nature_of_business,
+      technologies: Array.isArray(response.technologies) ? response.technologies.join(', ') : response.technologies,
+      collaboration_types: Array.isArray(response.collaboration_types) ? response.collaboration_types.join(', ') : response.collaboration_types,
+      challenges: Array.isArray(response.challenges) ? response.challenges.join(', ') : response.challenges,
+      support_needed: Array.isArray(response.support_needed) ? response.support_needed.join(', ') : response.support_needed,
+      interested_activities: Array.isArray(response.interested_activities) ? response.interested_activities.join(', ') : response.interested_activities,
+      // Add "Other" custom text fields
+      nature_of_business_other: response.nature_of_business_other || '',
+      technologies_other: response.technologies_other || '',
+      collaboration_types_other: response.collaboration_types_other || '',
+      challenges_other: response.challenges_other || '',
+      support_needed_other: response.support_needed_other || '',
+      interested_activities_other: response.interested_activities_other || ''
+    }));
 
     worksheet.addRows(formattedRows);
 

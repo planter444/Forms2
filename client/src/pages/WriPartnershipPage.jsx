@@ -3,6 +3,22 @@ import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+// Add animation styles
+const animationStyles = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
+  }
+  @keyframes borderSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 // Helper function to convert hex to RGB with opacity
 const hexToRgba = (hex, opacity) => {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -84,11 +100,11 @@ const AnimatedSection = ({ children, settings, id, className = "" }) => {
   }
 
   return (
-    <section id={id} className={className}>
+    <section id={id} className={className} style={{ scrollMarginTop: "80px" }}>
       <div
         ref={ref}
         className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
-        style={{ transitionDuration: `${animationDuration}ms` }}
+        style={{ transitionDuration: `${animationDuration}ms`, transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)" }}
       >
         {children}
       </div>
@@ -114,9 +130,10 @@ const StaggeredItem = ({ children, settings, index, className = "" }) => {
     <div
       ref={ref}
       className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""} ${className}`}
-      style={{ 
+      style={{
         transitionDuration: `${animationDuration}ms`,
-        transitionDelay: `${delay}ms`
+        transitionDelay: `${delay}ms`,
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)"
       }}
     >
       {children}
@@ -166,9 +183,22 @@ const AboutSection = ({ settings }) => {
             { bg: "#ecfdf5", border: "#a7f3d0", text: "#065f46" }
           ];
           const color = colors[index % colors.length];
+
+          // Different shapes for different indices
+          const shapes = [
+            "rounded-2xl",
+            "rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg",
+            "rounded-3xl",
+            "rounded-tl-lg rounded-tr-3xl rounded-bl-3xl rounded-br-lg",
+            "rounded-2xl",
+            "rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg",
+            "rounded-3xl"
+          ];
+          const shape = shapes[index % shapes.length];
+
           return (
             <StaggeredItem key={index} settings={settings} index={index}>
-              <div className="rounded-2xl border p-4 shadow-sm" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+              <div className={`border p-4 shadow-sm ${shape}`} style={{ backgroundColor: color.bg, borderColor: color.border }}>
                 <p className="font-medium" style={{ color: color.text }}>{item}</p>
               </div>
             </StaggeredItem>
@@ -478,6 +508,8 @@ const WriPartnershipPage = () => {
   });
   const [surveySubmitting, setSurveySubmitting] = useState(false);
   const [surveySuccess, setSurveySuccess] = useState(false);
+  const [surveyStarted, setSurveyStarted] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [businessFilters, setBusinessFilters] = useState({
     country: "",
     technology: "",
@@ -487,6 +519,15 @@ const WriPartnershipPage = () => {
   });
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Inject animation styles
+    const style = document.createElement('style');
+    style.textContent = animationStyles;
+    document.head.appendChild(style);
+
+    // Enable smooth scrolling
+    document.documentElement.style.scrollBehavior = 'smooth';
+
     const loadSettings = async () => {
       try {
         const response = await fetch(`${API_URL}/api/wri/public/settings`);
@@ -588,6 +629,7 @@ const WriPartnershipPage = () => {
 
       if (response.ok) {
         setSurveySuccess(true);
+        setShowSuccessPopup(true);
         setSurveyForm({
           company_name: "",
           contact_person: "",
@@ -714,7 +756,7 @@ const WriPartnershipPage = () => {
               className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
-              {settings?.hero?.primaryCta || "Share Your Experience"}
+              {settings?.hero?.primaryCta || "KEREA Survey"}
             </button>
             <button
               onClick={() => {
@@ -733,7 +775,7 @@ const WriPartnershipPage = () => {
         </div>
       </section>
 
-      <AnimatedSection id="about" className="py-16 md:py-24 px-4" settings={settings}>
+      <AnimatedSection id="about" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <AboutSection settings={settings} />
         </div>
@@ -758,9 +800,65 @@ const WriPartnershipPage = () => {
                 { bg: "#fafaf9", border: "#e7e5e4", text: "#15803d" }
               ];
               const color = colors[index % colors.length];
+
+              // Icons for different technology areas
+              const getIcon = (title) => {
+                const lowerTitle = title.toLowerCase();
+                if (lowerTitle.includes("solar")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("storage") || lowerTitle.includes("battery")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("mobility") || lowerTitle.includes("electric")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("wind")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("biogas") || lowerTitle.includes("bio")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("hydro") || lowerTitle.includes("water")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5l2-3.87a1 1 0 011.74 0L10.5 4H14a2 2 0 012 2v.66" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("geothermal")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    </svg>
+                  );
+                } else {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  );
+                }
+              };
+
               return (
                 <StaggeredItem key={area.id} settings={settings} index={index}>
                   <div className="rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all hover:scale-105" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+                    <div style={{ color: color.text }}>{getIcon(area.title)}</div>
                     <h3 className="text-xl font-semibold" style={{ color: color.text }}>{area.title}</h3>
                     <p className="mt-2 text-sm md:text-base" style={{ color: "#065f46" }}>{area.description}</p>
                   </div>
@@ -794,7 +892,7 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
+      <AnimatedSection id="events" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>Events</h2>
@@ -857,28 +955,36 @@ const WriPartnershipPage = () => {
         </div>
       </AnimatedSection>
 
-      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>
+      <AnimatedSection id="survey" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#f0fdf4" }} settings={settings}>
         <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>KEREA Survey</h2>
-            <p className="mt-4 text-lg" style={{ color: "#065f46" }}>
-              Kenya Renewable Energy Association Survey on Kenya–China Business & Partnership Engagement
-            </p>
-            <p className="mt-2 text-sm" style={{ color: "#065f46" }}>
-              Estimated completion time: 5–7 minutes
-            </p>
-          </div>
-
-          {surveySuccess ? (
-            <div className="rounded-2xl border p-8 text-center" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
-              <svg className="w-16 h-16 mx-auto mb-4" style={{ color: "#059669" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h3 className="text-2xl font-semibold" style={{ color: "#064e3b" }}>Thank You!</h3>
-              <p className="mt-2" style={{ color: "#065f46" }}>Your survey response has been submitted successfully.</p>
+          {!surveyStarted ? (
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: "#064e3b" }}>KEREA Survey</h2>
+              <p className="text-lg mb-2" style={{ color: "#065f46" }}>
+                Kenya Renewable Energy Association Survey on Kenya–China Business & Partnership Engagement
+              </p>
+              <p className="text-sm mb-8" style={{ color: "#065f46" }}>
+                Estimated completion time: 5–7 minutes
+              </p>
+              <button
+                onClick={() => setSurveyStarted(true)}
+                className="relative px-8 py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+                style={{ backgroundColor: "#059669", animation: "breathe 2s ease-in-out infinite" }}
+              >
+                <span className="relative z-10">Start Now</span>
+                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-white opacity-50" style={{ animation: "borderSpin 2s linear infinite" }}></div>
+              </button>
             </div>
           ) : (
-            <form onSubmit={handleSurveySubmit} className="space-y-8">
+            <>
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "#064e3b" }}>KEREA Survey</h2>
+                <p className="mt-4 text-lg" style={{ color: "#065f46" }}>
+                  Kenya Renewable Energy Association Survey on Kenya–China Business & Partnership Engagement
+                </p>
+              </div>
+
+              <form onSubmit={handleSurveySubmit} className="space-y-8">
               <StaggeredItem settings={settings} index={0}>
                 <div className="rounded-2xl border p-6" style={{ backgroundColor: "#f0fdf4", borderColor: "#a7f3d0" }}>
                   <h3 className="text-xl font-semibold mb-4" style={{ color: "#064e3b" }}>Section 1: Company Information</h3>
@@ -1189,9 +1295,67 @@ const WriPartnershipPage = () => {
               </button>
               </StaggeredItem>
             </form>
+            </>
           )}
         </div>
       </AnimatedSection>
+
+      {showSuccessPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="rounded-2xl border p-8 text-center max-w-md mx-4" style={{ backgroundColor: "#ffffff", borderColor: "#a7f3d0" }}>
+            <svg className="w-16 h-16 mx-auto mb-4" style={{ color: "#059669" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="text-2xl font-semibold mb-2" style={{ color: "#064e3b" }}>Thank You!</h3>
+            <p className="mb-6" style={{ color: "#065f46" }}>Your survey response has been submitted successfully.</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => setShowSuccessPopup(false)}
+                className="px-6 py-2 rounded-full font-semibold text-white transition hover:scale-105"
+                style={{ backgroundColor: "#059669" }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setShowSuccessPopup(false);
+                  setSurveyStarted(false);
+                  setSurveySuccess(false);
+                  setSurveyForm({
+                    company_name: "",
+                    contact_person: "",
+                    position: "",
+                    email: "",
+                    phone: "",
+                    nature_of_business: [],
+                    technologies: [],
+                    engages_chinese_partners: "",
+                    collaboration_types: [],
+                    engagement_duration: "",
+                    challenges: [],
+                    support_needed: [],
+                    future_interest: "",
+                    interested_activities: [],
+                    additional_comments: ""
+                  });
+                  setOtherInputs({
+                    nature_of_business_other: "",
+                    technologies_other: "",
+                    collaboration_types_other: "",
+                    challenges_other: "",
+                    support_needed_other: "",
+                    interested_activities_other: ""
+                  });
+                }}
+                className="px-6 py-2 rounded-full font-semibold text-white transition hover:scale-105"
+                style={{ backgroundColor: "#065f46" }}
+              >
+                Submit Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {settings?.support?.enabled !== false && (
         <AnimatedSection id="support" className="py-16 md:py-24 px-4" style={{ backgroundColor: "#ffffff" }} settings={settings}>

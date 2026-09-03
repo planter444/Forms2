@@ -12,15 +12,37 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       title: "Africa–China Renewable Energy Partnership",
       subtitle: "Connecting Kenya's Renewable Energy Sector with Chinese Technology, Investment and Business Opportunities.",
       introduction: "This dedicated hub facilitates B2B linkages, partnership enquiries, events, business opportunities, knowledge sharing, and stakeholder engagement between Kenya and China in the renewable energy sector.",
-      primaryCta: "Make a Partnership Enquiry",
+      primaryCta: "Share Your Experience",
+      primaryCtaLink: "#survey",
       secondaryCta: "Browse Business Database",
+      secondaryCtaLink: "#business-database",
       backgroundImageUrl: "",
       overlayOpacity: 0.3
     },
+    support: {
+      email: "info@kerea.org",
+      enabled: true
+    },
+    quickLinks: [
+      { label: "KEREA", url: "https://kerea.org" }
+    ],
+    footer: {
+      description: "The Africa–China Renewable Energy Partnership is an initiative by the Kenya Renewable Energy Association (KEREA) to strengthen collaboration between Kenya and China in the renewable energy sector.",
+      contactEmail: "info@kerea.org",
+      socialLinks: []
+    },
     animation: {
       enabled: true,
-      style: "fade-up",
-      duration: 600
+      desktop: {
+        style: "fade-up",
+        duration: 600,
+        stagger: 100
+      },
+      mobile: {
+        style: "fade-up",
+        duration: 500,
+        stagger: 50
+      }
     }
   });
   const [heroImageFile, setHeroImageFile] = useState(null);
@@ -695,7 +717,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       <div className="flex gap-2 border-b" style={{ borderColor: palette.borderColor }}>
-        {["hero", "real-hero", "animation", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
+        {["hero", "real-hero", "animation", "support", "quick-links", "footer", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
           <button
             key={tab}
             type="button"
@@ -741,35 +763,168 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <option value="false">No</option>
               </select>
             </div>
+            
+            <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Desktop Animations</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Style</label>
+                  <select
+                    value={wriSettings.animation?.desktop?.style || "fade-up"}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        desktop: { ...wriSettings.animation?.desktop, style: e.target.value }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  >
+                    <option value="fade-up">Fade Up</option>
+                    <option value="fade-in">Fade In</option>
+                    <option value="slide-left">Slide Left</option>
+                    <option value="slide-right">Slide Right</option>
+                    <option value="zoom-in">Zoom In</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Duration (ms)</label>
+                  <input
+                    type="number"
+                    value={wriSettings.animation?.desktop?.duration || 600}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        desktop: { ...wriSettings.animation?.desktop, duration: parseInt(e.target.value) || 600 }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Stagger Delay (ms)</label>
+                  <input
+                    type="number"
+                    value={wriSettings.animation?.desktop?.stagger || 100}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        desktop: { ...wriSettings.animation?.desktop, stagger: parseInt(e.target.value) || 100 }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Mobile Animations</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Style</label>
+                  <select
+                    value={wriSettings.animation?.mobile?.style || "fade-up"}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        mobile: { ...wriSettings.animation?.mobile, style: e.target.value }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  >
+                    <option value="fade-up">Fade Up</option>
+                    <option value="fade-in">Fade In</option>
+                    <option value="slide-left">Slide Left</option>
+                    <option value="slide-right">Slide Right</option>
+                    <option value="zoom-in">Zoom In</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Duration (ms)</label>
+                  <input
+                    type="number"
+                    value={wriSettings.animation?.mobile?.duration || 500}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        mobile: { ...wriSettings.animation?.mobile, duration: parseInt(e.target.value) || 500 }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Stagger Delay (ms)</label>
+                  <input
+                    type="number"
+                    value={wriSettings.animation?.mobile?.stagger || 50}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      animation: { 
+                        ...wriSettings.animation, 
+                        mobile: { ...wriSettings.animation?.mobile, stagger: parseInt(e.target.value) || 50 }
+                      }
+                    })}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSaveWriSettings}
+              className="px-6 py-3 rounded-full font-medium text-white transition hover:scale-105"
+              style={{ backgroundColor: palette.primary }}
+            >
+              Save Animation Settings
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "support" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Support & Contact Settings</h3>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Style</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Enable Support Section</label>
               <select
-                value={wriSettings.animation?.style || "fade-up"}
+                value={wriSettings.support?.enabled ? "true" : "false"}
                 onChange={(e) => setWriSettings({
                   ...wriSettings,
-                  animation: { ...wriSettings.animation, style: e.target.value }
+                  support: { ...wriSettings.support, enabled: e.target.value === "true" }
                 })}
                 className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
               >
-                <option value="fade-up">Fade Up</option>
-                <option value="fade-in">Fade In</option>
-                <option value="slide-left">Slide Left</option>
-                <option value="slide-right">Slide Right</option>
-                <option value="zoom-in">Zoom In</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Animation Duration (ms)</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Support Email</label>
               <input
-                type="number"
-                value={wriSettings.animation?.duration || 600}
+                type="email"
+                value={wriSettings.support?.email || ""}
                 onChange={(e) => setWriSettings({
                   ...wriSettings,
-                  animation: { ...wriSettings.animation, duration: parseInt(e.target.value) || 600 }
+                  support: { ...wriSettings.support, email: e.target.value }
                 })}
                 className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
                 style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                placeholder="support@example.com"
               />
             </div>
             <button
@@ -778,7 +933,119 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               className="px-6 py-3 rounded-full font-medium text-white transition hover:scale-105"
               style={{ backgroundColor: palette.primary }}
             >
-              Save Animation Settings
+              Save Support Settings
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "quick-links" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Quick Links</h3>
+          <div className="space-y-4">
+            {wriSettings.quickLinks?.map((link, index) => (
+              <div key={index} className="flex gap-2 items-start">
+                <div className="flex-1 space-y-2">
+                  <input
+                    type="text"
+                    value={link.label}
+                    onChange={(e) => {
+                      const newLinks = [...wriSettings.quickLinks];
+                      newLinks[index].label = e.target.value;
+                      setWriSettings({ ...wriSettings, quickLinks: newLinks });
+                    }}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                    placeholder="Link Label"
+                  />
+                  <input
+                    type="url"
+                    value={link.url}
+                    onChange={(e) => {
+                      const newLinks = [...wriSettings.quickLinks];
+                      newLinks[index].url = e.target.value;
+                      setWriSettings({ ...wriSettings, quickLinks: newLinks });
+                    }}
+                    className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newLinks = wriSettings.quickLinks.filter((_, i) => i !== index);
+                    setWriSettings({ ...wriSettings, quickLinks: newLinks });
+                  }}
+                  className="mt-6 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50"
+                  style={{ borderColor: palette.borderColor }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setWriSettings({
+                ...wriSettings,
+                quickLinks: [...(wriSettings.quickLinks || []), { label: "", url: "" }]
+              })}
+              className="px-4 py-2 rounded-lg border-2 border-dashed"
+              style={{ borderColor: palette.borderColor, color: palette.textColor }}
+            >
+              + Add Link
+            </button>
+            <button
+              type="button"
+              onClick={handleSaveWriSettings}
+              className="px-6 py-3 rounded-full font-medium text-white transition hover:scale-105"
+              style={{ backgroundColor: palette.primary }}
+            >
+              Save Quick Links
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === "footer" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Footer Settings</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Description</label>
+              <textarea
+                value={wriSettings.footer?.description || ""}
+                onChange={(e) => setWriSettings({
+                  ...wriSettings,
+                  footer: { ...wriSettings.footer, description: e.target.value }
+                })}
+                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                rows={3}
+                placeholder="Footer description text"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Contact Email</label>
+              <input
+                type="email"
+                value={wriSettings.footer?.contactEmail || ""}
+                onChange={(e) => setWriSettings({
+                  ...wriSettings,
+                  footer: { ...wriSettings.footer, contactEmail: e.target.value }
+                })}
+                className="w-full rounded-xl border px-4 py-3 focus:outline-none focus:ring-2"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                placeholder="contact@example.com"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleSaveWriSettings}
+              className="px-6 py-3 rounded-full font-medium text-white transition hover:scale-105"
+              style={{ backgroundColor: palette.primary }}
+            >
+              Save Footer Settings
             </button>
           </div>
         </div>

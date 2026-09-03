@@ -87,7 +87,7 @@ const getInitialClass = (style) => {
   }
 };
 
-const AnimatedSection = ({ children, settings, id, className = "" }) => {
+const AnimatedSection = ({ children, settings, id, className = "", style = {} }) => {
   const [ref, inView] = useScrollReveal();
   const animationEnabled = settings?.animation?.enabled !== false;
   const isMobile = window.innerWidth < 768;
@@ -95,12 +95,17 @@ const AnimatedSection = ({ children, settings, id, className = "" }) => {
   const animationStyle = animationConfig?.style || "fade-up";
   const animationDuration = animationConfig?.duration || (isMobile ? 500 : 600);
 
+  const sectionStyle = {
+    scrollMarginTop: "80px",
+    ...style
+  };
+
   if (!animationEnabled) {
-    return <section id={id} className={className}>{children}</section>;
+    return <section id={id} className={className} style={sectionStyle}>{children}</section>;
   }
 
   return (
-    <section id={id} className={className} style={{ scrollMarginTop: "80px", scrollBehavior: "smooth" }}>
+    <section id={id} className={className} style={sectionStyle}>
       <div
         ref={ref}
         className={`${getInitialClass(animationStyle)} ${inView ? getAnimationClass(animationStyle, inView) : ""}`}
@@ -160,7 +165,7 @@ const AboutSection = ({ settings }) => {
           The Kenya–China Renewable Energy Partnership focuses on strengthening collaboration across key areas:
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => {
           const colors = [
             { bg: "#f0fdf4", border: "#a7f3d0", text: "#065f46" },
@@ -173,27 +178,10 @@ const AboutSection = ({ settings }) => {
           ];
           const color = colors[index % colors.length];
 
-          // Different shapes for different indices
-          const shapes = [
-            "rounded-2xl",
-            "rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg",
-            "rounded-3xl",
-            "rounded-tl-lg rounded-tr-3xl rounded-bl-3xl rounded-br-lg",
-            "rounded-2xl",
-            "rounded-tl-3xl rounded-br-3xl rounded-tr-lg rounded-bl-lg",
-            "rounded-3xl"
-          ];
-          const shape = shapes[index % shapes.length];
-
-          // Only apply staggered animation to first 4 cards
-          const useStaggered = index < 4;
-
           return (
-            <StaggeredItem key={index} settings={settings} index={index} enabled={useStaggered}>
-              <div className={`border p-4 shadow-sm ${shape}`} style={{ backgroundColor: color.bg, borderColor: color.border }}>
-                <p className="font-medium" style={{ color: color.text }}>{item}</p>
-              </div>
-            </StaggeredItem>
+            <div key={index} className="border p-6 shadow-sm rounded-2xl" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+              <p className="font-medium" style={{ color: color.text }}>{item}</p>
+            </div>
           );
         })}
       </div>

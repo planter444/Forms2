@@ -339,6 +339,17 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
     const result = await pool.query("SELECT * FROM wri_survey_responses ORDER BY submitted_at DESC");
     const responses = result.rows;
 
+    // Get survey questions to map IDs to question text
+    const questionsResult = await pool.query("SELECT * FROM wri_survey_questions ORDER BY section_order, question_order");
+    const questions = questionsResult.rows;
+
+    // Create mapping from question ID to question text
+    const questionMap = {};
+    questions.forEach(q => {
+      questionMap[`question_${q.id}`] = q.question_text;
+      questionMap[`question_${q.id}_other`] = `${q.question_text} (Other)`;
+    });
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Survey Responses");
 
@@ -361,10 +372,11 @@ router.get("/admin/survey-responses/excel", async (req, res) => {
       }
     });
 
-    // Add dynamic question columns
+    // Add dynamic question columns with readable headers
     dynamicKeys.forEach(key => {
+      const headerText = questionMap[key] || key;
       columns.push({
-        header: key,
+        header: headerText,
         key: key,
         width: 30
       });

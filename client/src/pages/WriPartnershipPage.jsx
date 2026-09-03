@@ -771,8 +771,8 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-4 py-2 md:px-8 md:py-4 mx-auto md:mx-0 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
-              style={{ backgroundColor: "#ffffff", color: "#059669", maxWidth: "70%", width: "auto" }}
+              className="px-5 py-2 md:px-10 md:py-4 mx-auto md:mx-0 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+              style={{ backgroundColor: "#ffffff", color: "#059669", width: "auto" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
             </button>
@@ -785,7 +785,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold border-2 border-white text-white transition hover:scale-105 backdrop-blur-sm"
+              className="px-6 py-3 md:px-10 md:py-4 rounded-full font-bold border-2 border-white text-white transition hover:scale-105 backdrop-blur-sm"
             >
               {settings?.hero?.secondaryCta || "Browse Business Database"}
             </button>

@@ -1279,6 +1279,63 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </div>
             </div>
 
+            <div className="border-t pt-4" style={{ borderColor: palette.borderColor }}>
+              <h4 className="text-md font-semibold mb-3" style={{ color: palette.textColor }}>Particle Animation</h4>
+              <div className="space-y-3">
+                <div>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={wriSettings.patterns?.enabled !== false}
+                      onChange={(e) => setWriSettings({
+                        ...wriSettings,
+                        patterns: {
+                          ...wriSettings.patterns,
+                          enabled: e.target.checked
+                        }
+                      })}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium" style={{ color: palette.textColor }}>Enable Particle Animation</span>
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Particle Color</label>
+                  <input
+                    type="color"
+                    value={wriSettings.patterns?.color || "#059669"}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        color: e.target.value
+                      }
+                    })}
+                    className="w-full h-10 rounded-xl border px-3 focus:outline-none focus:ring-2"
+                    style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: palette.textColor }}>Particle Opacity</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={wriSettings.patterns?.opacity || 30}
+                    onChange={(e) => setWriSettings({
+                      ...wriSettings,
+                      patterns: {
+                        ...wriSettings.patterns,
+                        opacity: parseInt(e.target.value)
+                      }
+                    })}
+                    className="w-full"
+                  />
+                  <div className="text-xs mt-1" style={{ color: palette.textColor }}>Opacity: {wriSettings.patterns?.opacity || 30}%</div>
+                </div>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={handleSaveWriSettings}

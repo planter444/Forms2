@@ -28,7 +28,7 @@ const ParticleBackground = ({ color = "#059669", opacity = 0.3 }) => {
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * 0.5,
           vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 2 + 1
+          radius: Math.random() * 1 + 0.5
         });
       }
       particlesRef.current = particles;

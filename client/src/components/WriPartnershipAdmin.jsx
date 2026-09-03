@@ -2266,35 +2266,35 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                           <input
                             type="text"
                             value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2 text-sm"
-                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                            disabled
+                            className="w-full rounded-lg border px-3 py-2 text-sm bg-gray-50"
+                            style={{ borderColor: palette.borderColor }}
                           />
                         )}
                         {question.question_type === "email" && (
                           <input
                             type="email"
                             value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2 text-sm"
-                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                            disabled
+                            className="w-full rounded-lg border px-3 py-2 text-sm bg-gray-50"
+                            style={{ borderColor: palette.borderColor }}
                           />
                         )}
                         {question.question_type === "tel" && (
                           <input
                             type="tel"
                             value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2 text-sm"
-                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                            disabled
+                            className="w-full rounded-lg border px-3 py-2 text-sm bg-gray-50"
+                            style={{ borderColor: palette.borderColor }}
                           />
                         )}
                         {question.question_type === "textarea" && (
                           <textarea
                             value={surveyForm[`question_${question.id}`] || ""}
-                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
-                            className="w-full rounded-lg border px-3 py-2 text-sm"
-                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                            disabled
+                            className="w-full rounded-lg border px-3 py-2 text-sm bg-gray-50"
+                            style={{ borderColor: palette.borderColor }}
                             rows={3}
                           />
                         )}
@@ -2306,7 +2306,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                                   type="radio"
                                   name={`question_${question.id}`}
                                   checked={surveyForm[`question_${question.id}`] === option}
-                                  onChange={() => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: option })}
+                                  disabled
                                 />
                                 {option}
                               </label>
@@ -2320,17 +2320,21 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                                 <input
                                   type="checkbox"
                                   checked={Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`].includes(option) : false}
-                                  onChange={() => {
-                                    const currentValues = Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`] : [];
-                                    const newValue = currentValues.includes(option)
-                                      ? currentValues.filter(item => item !== option)
-                                      : [...currentValues, option];
-                                    setSurveyForm({ ...surveyForm, [`question_${question.id}`]: newValue });
-                                  }}
+                                  disabled
                                 />
                                 {option}
                               </label>
                             ))}
+                          </div>
+                        )}
+                        {question.question_type === "checkbox" && Array.isArray(surveyForm[`question_${question.id}`]) && surveyForm[`question_${question.id}`].includes("Other") && (
+                          <div className="mt-2 p-2 rounded bg-gray-50 text-sm">
+                            <span className="font-medium">Other:</span> {surveyForm[`question_${question.id}_other`] || "Not specified"}
+                          </div>
+                        )}
+                        {question.question_type === "radio" && surveyForm[`question_${question.id}`] === "Other" && (
+                          <div className="mt-2 p-2 rounded bg-gray-50 text-sm">
+                            <span className="font-medium">Other:</span> {surveyForm[`question_${question.id}_other`] || "Not specified"}
                           </div>
                         )}
                         {question.question_type === "scale" && (
@@ -2363,15 +2367,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={handleSaveSurvey}
-                  disabled={loading}
-                  className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
-                  style={{ backgroundColor: palette.primary }}
-                >
-                  {loading ? "Saving..." : "Update Survey Response"}
-                </button>
-                <button
-                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setSurveyForm({});
@@ -2379,7 +2374,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                   className="w-full rounded-lg border py-2 text-sm font-semibold"
                   style={{ borderColor: palette.borderColor, color: palette.textColor }}
                 >
-                  Cancel Edit
+                  Close
                 </button>
               </div>
             </div>
@@ -2408,12 +2403,8 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>{response.engages_chinese_partners}</td>
                       <td className="px-4 py-2" style={{ color: palette.textColor }}>
                         {response.responses_jsonb ? (
-                          <div className="text-xs">
-                            {Object.entries(response.responses_jsonb).map(([key, value]) => (
-                              <div key={key}>
-                                <span className="font-medium">{key}:</span> {Array.isArray(value) ? value.join(', ') : String(value)}
-                              </div>
-                            ))}
+                          <div className="text-xs truncate max-w-xs">
+                            {Object.keys(response.responses_jsonb).length} responses
                           </div>
                         ) : '-'}
                       </td>

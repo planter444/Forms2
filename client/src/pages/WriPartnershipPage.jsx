@@ -753,7 +753,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
+              className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl w-auto"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
@@ -816,16 +816,36 @@ const WriPartnershipPage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   );
-                } else if (lowerTitle.includes("mobility") || lowerTitle.includes("electric")) {
+                } else if (lowerTitle.includes("mobility") || lowerTitle.includes("electric") || lowerTitle.includes("e-mobility")) {
                   return (
                     <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("productive") || lowerTitle.includes("pure")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("manufacturing") || lowerTitle.includes("green")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  );
+                } else if (lowerTitle.includes("other") || lowerTitle.includes("cross")) {
+                  return (
+                    <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                   );
                 } else if (lowerTitle.includes("wind")) {
                   return (
                     <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
                     </svg>
                   );
                 } else if (lowerTitle.includes("biogas") || lowerTitle.includes("bio")) {
@@ -858,7 +878,9 @@ const WriPartnershipPage = () => {
               return (
                 <StaggeredItem key={area.id} settings={settings} index={index}>
                   <div className="rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all hover:scale-105" style={{ backgroundColor: color.bg, borderColor: color.border }}>
-                    <div style={{ color: color.text }}>{getIcon(area.title)}</div>
+                    <div className={`flex ${index % 3 === 0 ? 'justify-start' : index % 3 === 1 ? 'justify-end' : 'justify-center'} md:justify-start`} style={{ color: color.text }}>
+                      {getIcon(area.title)}
+                    </div>
                     <h3 className="text-xl font-semibold" style={{ color: color.text }}>{area.title}</h3>
                     <p className="mt-2 text-sm md:text-base" style={{ color: "#065f46" }}>{area.description}</p>
                   </div>

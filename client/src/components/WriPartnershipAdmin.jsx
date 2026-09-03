@@ -7,12 +7,13 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
   const [activeSubTab, setActiveSubTab] = useState("hero");
   const [surveyResponses, setSurveyResponses] = useState([]);
+  const [surveyQuestions, setSurveyQuestions] = useState([]);
   const [wriSettings, setWriSettings] = useState({
     hero: {
       title: "Africa–China Renewable Energy Partnership",
       subtitle: "Connecting Kenya's Renewable Energy Sector with Chinese Technology, Investment and Business Opportunities.",
       introduction: "This dedicated hub facilitates B2B linkages, partnership enquiries, events, business opportunities, knowledge sharing, and stakeholder engagement between Kenya and China in the renewable energy sector.",
-      primaryCta: "Share Your Experience",
+      primaryCta: "KEREA Survey",
       primaryCtaLink: "#survey",
       secondaryCta: "Browse Business Database",
       secondaryCtaLink: "#business-database",
@@ -131,6 +132,15 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     additional_comments: ""
   });
 
+  const [surveyQuestionForm, setSurveyQuestionForm] = useState({
+    section_order: 1,
+    question_order: 1,
+    question_text: "",
+    question_type: "text",
+    options: [],
+    required: false
+  });
+
   const [editingItem, setEditingItem] = useState(null);
 
   const fetchSurveyResponses = async () => {
@@ -225,6 +235,71 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     }
   };
 
+  const fetchSurveyQuestions = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/survey-questions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setSurveyQuestions(data);
+    } catch (error) {
+      console.error("Error fetching survey questions:", error);
+    }
+  };
+
+  const handleSaveSurveyQuestion = async () => {
+    setLoading(true);
+    try {
+      const url = editingItem
+        ? `${API_URL}/api/wri/admin/survey-questions/${editingItem.id}`
+        : `${API_URL}/api/wri/admin/survey-questions`;
+      const method = editingItem ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(surveyQuestionForm)
+      });
+
+      if (response.ok) {
+        setNotice(editingItem ? "Survey question updated" : "Survey question created");
+        setSurveyQuestionForm({
+          section_order: 1,
+          question_order: 1,
+          question_text: "",
+          question_type: "text",
+          options: [],
+          required: false
+        });
+        setEditingItem(null);
+        fetchSurveyQuestions();
+      }
+    } catch (error) {
+      setError("Failed to save survey question");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteSurveyQuestion = async (id) => {
+    if (!confirm("Are you sure you want to delete this survey question?")) return;
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/survey-questions/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setNotice("Survey question deleted");
+        fetchSurveyQuestions();
+      }
+    } catch (error) {
+      setError("Failed to delete survey question");
+    }
+  };
+
   useEffect(() => {
     fetchWriSettings();
     fetchEnquiries();
@@ -233,6 +308,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     fetchPartners();
     fetchResources();
     fetchSurveyResponses();
+    fetchSurveyQuestions();
   }, []);
 
   const fetchWriSettings = async () => {
@@ -717,21 +793,35 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       </div>
 
       <div className="flex gap-2 border-b" style={{ borderColor: palette.borderColor }}>
-        {["hero", "real-hero", "animation", "support", "quick-links", "footer", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
+        {[
+          { id: "hero", label: "Hero" },
+          { id: "real-hero", label: "Real Hero" },
+          { id: "animation", label: "Animation" },
+          { id: "support", label: "Support" },
+          { id: "quick-links", label: "Quick Links" },
+          { id: "footer", label: "Footer" },
+          { id: "enquiries", label: "Enquiries" },
+          { id: "businesses", label: "Businesses" },
+          { id: "events", label: "Events" },
+          { id: "partners", label: "Partners" },
+          { id: "resources", label: "Resources" },
+          { id: "survey", label: "Survey Responses" },
+          { id: "survey-questions", label: "Survey Questions" }
+        ].map((tab) => (
           <button
-            key={tab}
+            key={tab.id}
             type="button"
             onClick={() => {
-              setActiveSubTab(tab);
+              setActiveSubTab(tab.id);
               setEditingItem(null);
             }}
-            className="px-4 py-2 text-sm font-medium capitalize transition-colors"
+            className="px-4 py-2 text-sm font-medium transition-colors"
             style={{
-              color: activeSubTab === tab ? palette.primary : palette.mutedTextColor,
-              borderBottom: activeSubTab === tab ? `2px solid ${palette.primary}` : "2px solid transparent"
+              color: activeSubTab === tab.id ? palette.primary : palette.mutedTextColor,
+              borderBottom: activeSubTab === tab.id ? `2px solid ${palette.primary}` : "2px solid transparent"
             }}
           >
-            {tab}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -1748,6 +1838,148 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {activeSubTab === "survey-questions" && (
+        <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
+          <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Survey Questions</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="number"
+                placeholder="Section Order"
+                value={surveyQuestionForm.section_order}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, section_order: parseInt(e.target.value) })}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+              <input
+                type="number"
+                placeholder="Question Order"
+                value={surveyQuestionForm.question_order}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_order: parseInt(e.target.value) })}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="Question Text"
+              value={surveyQuestionForm.question_text}
+              onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_text: e.target.value })}
+              className="w-full rounded-lg border px-3 py-2 text-sm"
+              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+            />
+            <select
+              value={surveyQuestionForm.question_type}
+              onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, question_type: e.target.value })}
+              className="w-full rounded-lg border px-3 py-2 text-sm"
+              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+            >
+              <option value="text">Text</option>
+              <option value="email">Email</option>
+              <option value="tel">Phone</option>
+              <option value="radio">Radio (Single Choice)</option>
+              <option value="checkbox">Checkbox (Multiple Choice)</option>
+              <option value="textarea">Textarea</option>
+            </select>
+            {(surveyQuestionForm.question_type === "radio" || surveyQuestionForm.question_type === "checkbox") && (
+              <div>
+                <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Options (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="Option 1, Option 2, Option 3"
+                  value={surveyQuestionForm.options.join(", ")}
+                  onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, options: e.target.value.split(",").map(o => o.trim()) })}
+                  className="w-full rounded-lg border px-3 py-2 text-sm"
+                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                />
+              </div>
+            )}
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={surveyQuestionForm.required}
+                onChange={(e) => setSurveyQuestionForm({ ...surveyQuestionForm, required: e.target.checked })}
+              />
+              <span className="text-sm" style={{ color: palette.textColor }}>Required</span>
+            </label>
+            <button
+              onClick={handleSaveSurveyQuestion}
+              disabled={loading}
+              className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
+              style={{ backgroundColor: palette.primary }}
+            >
+              {loading ? "Saving..." : (editingItem ? "Update Question" : "Add Question")}
+            </button>
+            {editingItem && (
+              <button
+                onClick={() => {
+                  setEditingItem(null);
+                  setSurveyQuestionForm({
+                    section_order: 1,
+                    question_order: 1,
+                    question_text: "",
+                    question_type: "text",
+                    options: [],
+                    required: false
+                  });
+                }}
+                className="rounded-lg px-4 py-2 text-sm font-semibold"
+                style={{ backgroundColor: palette.surfaceMuted, color: palette.textColor }}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+          <div className="mt-6">
+            <h4 className="text-md font-medium mb-3" style={{ color: palette.textColor }}>Existing Questions</h4>
+            <div className="space-y-2">
+              {surveyQuestions.map((question) => (
+                <div key={question.id} className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}>
+                  <div>
+                    <div className="text-sm font-medium" style={{ color: palette.textColor }}>
+                      Section {question.section_order} - Q{question.question_order}: {question.question_text}
+                    </div>
+                    <div className="text-xs" style={{ color: palette.mutedTextColor }}>
+                      Type: {question.question_type} | Required: {question.required ? "Yes" : "No"}
+                      {question.options.length > 0 && ` | Options: ${question.options.join(", ")}`}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setEditingItem(question);
+                        setSurveyQuestionForm({
+                          section_order: question.section_order,
+                          question_order: question.question_order,
+                          question_text: question.question_text,
+                          question_type: question.question_type,
+                          options: question.options,
+                          required: question.required
+                        });
+                      }}
+                      className="rounded px-3 py-1 text-xs font-semibold"
+                      style={{ backgroundColor: palette.primary, color: "white" }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSurveyQuestion(question.id)}
+                      className="rounded px-3 py-1 text-xs font-semibold"
+                      style={{ backgroundColor: "#ef4444", color: "white" }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {surveyQuestions.length === 0 && (
+              <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No survey questions yet.</p>
+            )}
+          </div>
         </div>
       )}
 

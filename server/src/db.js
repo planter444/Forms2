@@ -377,8 +377,27 @@ export const initializeDatabase = async () => {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS wri_survey_questions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        section_order INTEGER NOT NULL DEFAULT 1,
+        question_order INTEGER NOT NULL DEFAULT 1,
+        question_text TEXT NOT NULL,
+        question_type TEXT NOT NULL DEFAULT 'text',
+        options TEXT[] DEFAULT '{}',
+        required BOOLEAN NOT NULL DEFAULT false,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await pool.query(`
       CREATE INDEX IF NOT EXISTS wri_survey_responses_submitted_at_index
         ON wri_survey_responses (submitted_at DESC);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS wri_survey_questions_section_order_index
+        ON wri_survey_questions (section_order, question_order);
     `);
 
     await pool.query(`

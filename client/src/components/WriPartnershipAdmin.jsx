@@ -985,25 +985,25 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         <p className="mt-2 text-sm" style={{ color: palette.mutedTextColor }}>Manage hero content, enquiries, businesses, events, partners, and resources.</p>
       </div>
 
-      <div className="flex gap-2 border-b" style={{ borderColor: palette.borderColor }}>
+      <div className="flex flex-wrap gap-2 border-b pb-2" style={{ borderColor: palette.borderColor }}>
         {[
-          { id: "hero", label: "Hero" },
-          { id: "real-hero", label: "Real Hero" },
-          { id: "animation", label: "Animation" },
-          { id: "support", label: "Support" },
-          { id: "quick-links", label: "Quick Links" },
-          { id: "footer", label: "Footer" },
-          { id: "enquiries", label: "Enquiries" },
-          { id: "businesses", label: "Businesses" },
-          { id: "lead-status", label: "Lead Status" },
-          { id: "lead-activities", label: "Lead Activities" },
-          { id: "lead-scores", label: "Lead Scores" },
-          { id: "match-recommendations", label: "Match Recommendations" },
-          { id: "events", label: "Events" },
-          { id: "partners", label: "Partners" },
-          { id: "resources", label: "Resources" },
-          { id: "survey", label: "Survey Responses" },
-          { id: "survey-questions", label: "Survey Questions" }
+          { id: "hero", label: "Hero", icon: "🏠" },
+          { id: "real-hero", label: "Real Hero", icon: "⭐" },
+          { id: "animation", label: "Animation", icon: "🎬" },
+          { id: "support", label: "Support", icon: "❓" },
+          { id: "quick-links", label: "Quick Links", icon: "🔗" },
+          { id: "footer", label: "Footer", icon: "📋" },
+          { id: "enquiries", label: "Enquiries", icon: "📧" },
+          { id: "businesses", label: "Businesses", icon: "🏢" },
+          { id: "lead-status", label: "Lead Status", icon: "📊" },
+          { id: "lead-activities", label: "Lead Activities", icon: "📝" },
+          { id: "lead-scores", label: "Lead Scores", icon: "📈" },
+          { id: "match-recommendations", label: "Match Recommendations", icon: "🎯" },
+          { id: "events", label: "Events", icon: "📅" },
+          { id: "partners", label: "Partners", icon: "🤝" },
+          { id: "resources", label: "Resources", icon: "📚" },
+          { id: "survey", label: "Survey Responses", icon: "📋" },
+          { id: "survey-questions", label: "Survey Questions", icon: "❓" }
         ].map((tab) => (
           <button
             key={tab.id}
@@ -1012,13 +1012,14 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               setActiveSubTab(tab.id);
               setEditingItem(null);
             }}
-            className="px-4 py-2 text-sm font-medium transition-colors"
+            className="px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1"
             style={{
               color: activeSubTab === tab.id ? palette.primary : palette.mutedTextColor,
               borderBottom: activeSubTab === tab.id ? `2px solid ${palette.primary}` : "2px solid transparent"
             }}
           >
-            {tab.label}
+            <span>{tab.icon}</span>
+            <span>{tab.label}</span>
           </button>
         ))}
       </div>

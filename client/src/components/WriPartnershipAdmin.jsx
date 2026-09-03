@@ -1764,34 +1764,39 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       {activeSubTab === "lead-scores" && (
         <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
           <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Lead Scores</h3>
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {leadScores && Array.isArray(leadScores) && leadScores.map((score) => (
-              <div key={score.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium" style={{ color: palette.textColor }}>{score.business_name}</p>
-                    <p className="text-sm" style={{ color: palette.mutedTextColor }}>Total Score: {score.total_score}/100</p>
-                    <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
-                      <div>Partnership Interest: {score.partnership_interest_score}/25</div>
-                      <div>Company Size: {score.company_size_score}/25</div>
-                      <div>Readiness: {score.readiness_score}/25</div>
-                      <div>Budget: {score.budget_score}/25</div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <p className="text-sm" style={{ color: palette.mutedTextColor }}>Click "Recalculate" on any business to generate or update lead scores.</p>
+            </div>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {leadScores && Array.isArray(leadScores) && leadScores.map((score) => (
+                <div key={score.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium" style={{ color: palette.textColor }}>{score.business_name}</p>
+                      <p className="text-sm" style={{ color: palette.mutedTextColor }}>Total Score: {score.total_score}/100</p>
+                      <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
+                        <div>Partnership Interest: {score.partnership_interest_score}/25</div>
+                        <div>Company Size: {score.company_size_score}/25</div>
+                        <div>Readiness: {score.readiness_score}/25</div>
+                        <div>Budget: {score.budget_score}/25</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => handleRecalculateScore(score.business_id)}
-                      className="text-xs text-blue-600 hover:underline"
-                    >
-                      Recalculate
-                    </button>
-                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
-                      score.total_score >= 75 ? 'bg-green-100 text-green-800' :
-                      score.total_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {score.total_score >= 75 ? 'High' : score.total_score >= 50 ? 'Medium' : 'Low'}
-                    </span>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleRecalculateScore(score.business_id)}
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        Recalculate
+                      </button>
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                        score.total_score >= 75 ? 'bg-green-100 text-green-800' :
+                        score.total_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {score.total_score >= 75 ? 'High' : score.total_score >= 50 ? 'Medium' : 'Low'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1799,61 +1804,64 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No lead scores yet. Click "Recalculate" on any business to generate scores.</p>
               )}
             </div>
+          </div>
         </div>
       )}
 
       {activeSubTab === "match-recommendations" && (
         <div className="rounded-[28px] border p-6" style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceBackground }}>
           <h3 className="text-lg font-semibold mb-4" style={{ color: palette.textColor }}>Match Recommendations</h3>
-          <div className="mb-4">
-            <select
-              onChange={(e) => {
-                if (e.target.value) {
-                  handleGenerateMatches(parseInt(e.target.value));
-                }
-              }}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
-              style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-            >
-              <option value="">Select Business to Generate Matches</option>
-              {businesses && Array.isArray(businesses) && businesses.map(business => (
-                <option key={business.id} value={business.id}>{business.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {matchRecommendations && Array.isArray(matchRecommendations) && matchRecommendations.map((match) => (
-              <div key={match.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium" style={{ color: palette.textColor }}>
-                      {match.business_name_1} ↔ {match.business_name_2}
-                    </p>
-                    <p className="text-sm" style={{ color: palette.mutedTextColor }}>Match Score: {match.match_score}/100</p>
-                    <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
-                      {Array.isArray(match.match_reasons) ? match.match_reasons.join(', ') : match.match_reasons}
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    handleGenerateMatches(parseInt(e.target.value));
+                  }
+                }}
+                className="w-full rounded-lg border px-3 py-2 text-sm"
+                style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              >
+                <option value="">Select Business to Generate Matches</option>
+                {businesses && Array.isArray(businesses) && businesses.map(business => (
+                  <option key={business.id} value={business.id}>{business.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {matchRecommendations && Array.isArray(matchRecommendations) && matchRecommendations.map((match) => (
+                <div key={match.id} className="rounded-lg border p-3" style={{ borderColor: palette.borderColor }}>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium" style={{ color: palette.textColor }}>
+                        {match.business_name_1} ↔ {match.business_name_2}
+                      </p>
+                      <p className="text-sm" style={{ color: palette.mutedTextColor }}>Match Score: {match.match_score}/100</p>
+                      <div className="text-xs mt-1" style={{ color: palette.mutedTextColor }}>
+                        {Array.isArray(match.match_reasons) ? match.match_reasons.join(', ') : match.match_reasons}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <select
-                      value={match.status}
-                      onChange={(e) => handleUpdateMatchStatus(match.id, e.target.value)}
-                      className="text-xs rounded border px-2 py-1"
-                      style={{ borderColor: palette.borderColor }}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="contacted">Contacted</option>
-                      <option value="in-progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
-                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
-                      match.match_score >= 70 ? 'bg-green-100 text-green-800' :
-                      match.match_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {match.match_score >= 70 ? 'High Match' : match.match_score >= 50 ? 'Medium Match' : 'Low Match'}
-                    </span>
+                    <div className="flex flex-col gap-2">
+                      <select
+                        value={match.status}
+                        onChange={(e) => handleUpdateMatchStatus(match.id, e.target.value)}
+                        className="text-xs rounded border px-2 py-1"
+                        style={{ borderColor: palette.borderColor }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                        match.match_score >= 70 ? 'bg-green-100 text-green-800' :
+                        match.match_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {match.match_score >= 70 ? 'High Match' : match.match_score >= 50 ? 'Medium Match' : 'Low Match'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1861,6 +1869,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <p className="py-4 text-center" style={{ color: palette.mutedTextColor }}>No match recommendations yet. Select a business and click "Generate Matches".</p>
               )}
             </div>
+          </div>
         </div>
       )}
 

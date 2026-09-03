@@ -753,7 +753,7 @@ const WriPartnershipPage = () => {
                   window.open(link, "_blank");
                 }
               }}
-              className="px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-white transition hover:scale-105 shadow-xl w-auto"
+              className="px-6 py-3 md:px-8 md:py-4 md:w-auto rounded-full font-bold text-white transition hover:scale-105 shadow-xl"
               style={{ backgroundColor: "#ffffff", color: "#059669" }}
             >
               {settings?.hero?.primaryCta || "KEREA Survey"}
@@ -833,13 +833,13 @@ const WriPartnershipPage = () => {
                 } else if (lowerTitle.includes("manufacturing") || lowerTitle.includes("green")) {
                   return (
                     <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   );
                 } else if (lowerTitle.includes("other") || lowerTitle.includes("cross")) {
                   return (
                     <svg className="w-8 h-8 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   );
                 } else if (lowerTitle.includes("wind")) {
@@ -877,12 +877,12 @@ const WriPartnershipPage = () => {
 
               return (
                 <StaggeredItem key={area.id} settings={settings} index={index}>
-                  <div className="rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all hover:scale-105" style={{ backgroundColor: color.bg, borderColor: color.border }}>
-                    <div className={`flex ${index % 3 === 0 ? 'justify-start' : index % 3 === 1 ? 'justify-end' : 'justify-center'} md:justify-start`} style={{ color: color.text }}>
+                  <div className="rounded-2xl border p-6 shadow-sm hover:shadow-lg transition-all hover:scale-105 flex flex-col" style={{ backgroundColor: color.bg, borderColor: color.border, minHeight: "200px" }}>
+                    <div className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'} md:justify-start`} style={{ color: color.text }}>
                       {getIcon(area.title)}
                     </div>
                     <h3 className="text-xl font-semibold" style={{ color: color.text }}>{area.title}</h3>
-                    <p className="mt-2 text-sm md:text-base" style={{ color: "#065f46" }}>{area.description}</p>
+                    <p className="mt-2 text-sm md:text-base flex-grow" style={{ color: "#065f46" }}>{area.description}</p>
                   </div>
                 </StaggeredItem>
               );
@@ -928,10 +928,10 @@ const WriPartnershipPage = () => {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {events.map((event, index) => (
                 <StaggeredItem key={event.id} settings={settings} index={index}>
-                  <div className="rounded-2xl border bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden" style={{ borderColor: "#a7f3d0" }}>
-                    <div className="h-48 flex items-center justify-center" style={{ backgroundColor: "#f0fdf4" }}>
+                  <div className="rounded-2xl border bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col" style={{ borderColor: "#a7f3d0", minHeight: "350px" }}>
+                    <div className="h-48 flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: "#f0fdf4" }}>
                       {event.image_url ? (
-                        <img src={event.image_url} alt={event.title} className="h-full w-full object-cover" />
+                        <img src={event.image_url} alt={event.title} className="h-full w-full object-contain" />
                       ) : (
                         <div className="text-center" style={{ color: "#065f46" }}>
                           <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -941,7 +941,7 @@ const WriPartnershipPage = () => {
                         </div>
                       )}
                     </div>
-                    <div className="p-6">
+                    <div className="p-6 flex-grow flex flex-col">
                       <h3 className="text-xl font-semibold" style={{ color: "#064e3b" }}>{event.title}</h3>
                       <div className="mt-2 flex items-center gap-2 text-sm" style={{ color: "#065f46" }}>
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -956,7 +956,7 @@ const WriPartnershipPage = () => {
                         </svg>
                         {event.location}
                       </div>
-                      <p className="mt-3 text-sm" style={{ color: "#064e3b" }}>{event.description}</p>
+                      <p className="mt-3 text-sm flex-grow" style={{ color: "#064e3b" }}>{event.description}</p>
                       {event.registration_link && (
                         <a
                           href={event.registration_link}

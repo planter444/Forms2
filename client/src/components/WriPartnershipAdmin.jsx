@@ -678,6 +678,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         {["hero", "enquiries", "businesses", "events", "partners", "resources", "survey"].map((tab) => (
           <button
             key={tab}
+            type="button"
             onClick={() => {
               setActiveSubTab(tab);
               setEditingItem(null);
@@ -782,6 +783,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               />
             </div>
             <button
+              type="button"
               onClick={handleSaveWriSettings}
               className="w-full rounded-lg py-2 text-sm font-semibold text-white"
               style={{ backgroundColor: palette.primary }}
@@ -797,6 +799,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold" style={{ color: palette.textColor }}>Partnership Enquiries</h3>
             <button
+              type="button"
               onClick={handleDownloadEnquiriesExcel}
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
               style={{ backgroundColor: palette.primary }}
@@ -838,6 +841,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </td>
                     <td className="px-4 py-3">
                       <button
+                        type="button"
                         onClick={() => handleDeleteEnquiry(enquiry.id)}
                         className="rounded-lg px-3 py-1 text-xs text-red-600 hover:bg-red-50"
                       >
@@ -950,6 +954,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 Approved for public display
               </label>
               <button
+                type="button"
                 onClick={handleSaveBusiness}
                 disabled={loading}
                 className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -959,6 +964,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
               {editingItem && (
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setBusinessForm({
@@ -994,6 +1000,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           setEditingItem(business);
                           setBusinessForm(business);
@@ -1003,6 +1010,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDeleteBusiness(business.id)}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1091,6 +1099,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <option value="past">Past</option>
               </select>
               <button
+                type="button"
                 onClick={handleSaveEvent}
                 disabled={loading}
                 className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -1100,6 +1109,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
               {editingItem && (
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setEventForm({
@@ -1129,6 +1139,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           setEditingItem(event);
                           setEventForm(event);
@@ -1138,6 +1149,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDeleteEvent(event.id)}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1218,6 +1230,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 Approved for public display
               </label>
               <button
+                type="button"
                 onClick={handleSavePartner}
                 disabled={loading}
                 className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -1227,6 +1240,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
               {editingItem && (
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setPartnerForm({
@@ -1255,6 +1269,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           setEditingItem(partner);
                           setPartnerForm(partner);
@@ -1264,6 +1279,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDeletePartner(partner.id)}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1286,6 +1302,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold" style={{ color: palette.textColor }}>Survey Responses</h3>
             <button
+              type="button"
               onClick={handleDownloadSurveyExcel}
               className="rounded-lg px-4 py-2 text-sm font-semibold text-white"
               style={{ backgroundColor: palette.primary }}
@@ -1379,6 +1396,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 rows={3}
               />
               <button
+                type="button"
                 onClick={handleSaveSurvey}
                 disabled={loading}
                 className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -1387,6 +1405,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 {loading ? "Saving..." : "Update Survey Response"}
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setEditingItem(null);
                   setSurveyForm({
@@ -1437,6 +1456,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       <td className="px-4 py-2">
                         <div className="flex gap-2">
                           <button
+                            type="button"
                             onClick={() => {
                               setEditingItem(response);
                               setSurveyForm({
@@ -1454,6 +1474,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                             Edit
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleDeleteSurvey(response.id)}
                             className="text-xs text-red-600 hover:underline"
                           >
@@ -1550,6 +1571,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 Published
               </label>
               <button
+                type="button"
                 onClick={handleSaveResource}
                 disabled={loading}
                 className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -1559,6 +1581,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
               </button>
               {editingItem && (
                 <button
+                  type="button"
                   onClick={() => {
                     setEditingItem(null);
                     setResourceForm({
@@ -1588,6 +1611,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                     </div>
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={() => {
                           setEditingItem(resource);
                           setResourceForm(resource);
@@ -1597,6 +1621,7 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDeleteResource(resource.id)}
                         className="text-xs text-red-600 hover:underline"
                       >

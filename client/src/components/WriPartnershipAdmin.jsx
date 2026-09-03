@@ -181,6 +181,18 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
     }
   };
 
+  const fetchSurveyQuestions = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/wri/admin/survey-questions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setSurveyQuestions(data);
+    } catch (error) {
+      console.error("Error fetching survey questions:", error);
+    }
+  };
+
   const handleDownloadSurveyExcel = async () => {
     try {
       const response = await fetch(`${API_URL}/api/wri/admin/survey-responses/excel`, {
@@ -264,18 +276,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
       }
     } catch (error) {
       setError("Failed to delete survey response");
-    }
-  };
-
-  const fetchSurveyQuestions = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/wri/admin/survey-questions`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      setSurveyQuestions(data);
-    } catch (error) {
-      console.error("Error fetching survey questions:", error);
     }
   };
 
@@ -2245,319 +2245,143 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
             <div className="mt-4 space-y-3">
               <h4 className="text-md font-medium" style={{ color: palette.textColor }}>Edit Survey Response</h4>
               
-              <div className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
-                <h5 className="text-sm font-semibold mb-2" style={{ color: palette.textColor }}>Section 1: Company Information</h5>
-                <input
-                  type="text"
-                  placeholder="Company Name"
-                  value={surveyForm.company_name}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, company_name: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
-                <input
-                  type="text"
-                  placeholder="Contact Person"
-                  value={surveyForm.contact_person}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, contact_person: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
-                <input
-                  type="text"
-                  placeholder="Position"
-                  value={surveyForm.position}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, position: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={surveyForm.email}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, email: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
-                <input
-                  type="text"
-                  placeholder="Phone"
-                  value={surveyForm.phone}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, phone: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                />
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Nature of Business</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Manufacturing", "Distribution / Supply", "Installation / EPC", "Financing / Investment", "Consultancy", "Research & Innovation", "Product Development", "Importation", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.nature_of_business.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.nature_of_business, option]
-                              : surveyForm.nature_of_business.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, nature_of_business: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {surveyForm.nature_of_business.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.nature_of_business_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, nature_of_business_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Renewable Energy Technologies</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Solar PV", "Solar Water Heating", "Clean Cooking", "Biogas", "Mini-grids", "Energy Storage (Battery Systems)", "E-mobility", "Productive Use of Renewable Energy (PURE)", "Energy Efficiency", "Cross-cutting / Multiple Technologies", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.technologies.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.technologies, option]
-                              : surveyForm.technologies.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, technologies: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {surveyForm.technologies.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.technologies_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, technologies_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-              </div>
+              {surveyQuestions && surveyQuestions.length > 0 ? (() => {
+                const groupedQuestions = {};
+                surveyQuestions.forEach(q => {
+                  if (!groupedQuestions[q.section_order]) {
+                    groupedQuestions[q.section_order] = [];
+                  }
+                  groupedQuestions[q.section_order].push(q);
+                });
 
-              <div className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
-                <h5 className="text-sm font-semibold mb-2" style={{ color: palette.textColor }}>Section 2: Current Engagement with Chinese Partners</h5>
-                <select
-                  value={surveyForm.engages_chinese_partners}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, engages_chinese_partners: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                >
-                  <option value="">Select option</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                  <option value="Planning to">Planning to</option>
-                </select>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Collaboration Types</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Trade and Import", "Technology Transfer", "Joint Ventures", "Investment Partnerships", "R&D Collaboration", "Training and Skills Development", "Market Expansion", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.collaboration_types.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.collaboration_types, option]
-                              : surveyForm.collaboration_types.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, collaboration_types: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
+                return Object.entries(groupedQuestions).map(([sectionNum, questions]) => (
+                  <div key={`section-${sectionNum}`} className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
+                    <h5 className="text-sm font-semibold mb-2" style={{ color: palette.textColor }}>Section {sectionNum}</h5>
+                    {questions.map((question) => (
+                      <div key={question.id} className="mb-3">
+                        <label className="block text-sm mb-1" style={{ color: palette.textColor }}>
+                          {question.question_text} {question.required && "*"}
+                        </label>
+                        {question.question_type === "text" && (
+                          <input
+                            type="text"
+                            value={surveyForm[`question_${question.id}`] || ""}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                            className="w-full rounded-lg border px-3 py-2 text-sm"
+                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                          />
+                        )}
+                        {question.question_type === "email" && (
+                          <input
+                            type="email"
+                            value={surveyForm[`question_${question.id}`] || ""}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                            className="w-full rounded-lg border px-3 py-2 text-sm"
+                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                          />
+                        )}
+                        {question.question_type === "tel" && (
+                          <input
+                            type="tel"
+                            value={surveyForm[`question_${question.id}`] || ""}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                            className="w-full rounded-lg border px-3 py-2 text-sm"
+                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                          />
+                        )}
+                        {question.question_type === "textarea" && (
+                          <textarea
+                            value={surveyForm[`question_${question.id}`] || ""}
+                            onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: e.target.value })}
+                            className="w-full rounded-lg border px-3 py-2 text-sm"
+                            style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+                            rows={3}
+                          />
+                        )}
+                        {question.question_type === "radio" && (
+                          <div className="space-y-1">
+                            {question.options.map((option) => (
+                              <label key={option} className="flex items-center gap-2 text-sm">
+                                <input
+                                  type="radio"
+                                  name={`question_${question.id}`}
+                                  checked={surveyForm[`question_${question.id}`] === option}
+                                  onChange={() => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: option })}
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                        {question.question_type === "checkbox" && (
+                          <div className="grid grid-cols-2 gap-1">
+                            {question.options.map((option) => (
+                              <label key={option} className="flex items-center gap-2 text-sm">
+                                <input
+                                  type="checkbox"
+                                  checked={Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`].includes(option) : false}
+                                  onChange={() => {
+                                    const currentValues = Array.isArray(surveyForm[`question_${question.id}`]) ? surveyForm[`question_${question.id}`] : [];
+                                    const newValue = currentValues.includes(option)
+                                      ? currentValues.filter(item => item !== option)
+                                      : [...currentValues, option];
+                                    setSurveyForm({ ...surveyForm, [`question_${question.id}`]: newValue });
+                                  }}
+                                />
+                                {option}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                        {question.question_type === "scale" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-4">
+                              <span className="text-sm">1 (Lowest)</span>
+                              <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={surveyForm[`question_${question.id}`] || 5}
+                                onChange={(e) => setSurveyForm({ ...surveyForm, [`question_${question.id}`]: parseInt(e.target.value) })}
+                                className="flex-1"
+                              />
+                              <span className="text-sm">10 (Highest)</span>
+                            </div>
+                            <div className="text-center font-bold" style={{ color: palette.textColor }}>
+                              {surveyForm[`question_${question.id}`] || 5}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
-                  {surveyForm.collaboration_types.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.collaboration_types_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, collaboration_types_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-                <select
-                  value={surveyForm.engagement_duration}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, engagement_duration: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                >
-                  <option value="">Select duration</option>
-                  <option value="Less than 1 year">Less than 1 year</option>
-                  <option value="1-3 years">1-3 years</option>
-                  <option value="4-7 years">4-7 years</option>
-                  <option value="Over 7 years">Over 7 years</option>
-                </select>
-              </div>
+                ));
+              })() : (
+                <p className="text-sm" style={{ color: palette.mutedTextColor }}>No survey questions configured.</p>
+              )}
 
-              <div className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
-                <h5 className="text-sm font-semibold mb-2" style={{ color: palette.textColor }}>Section 3: Challenges and Support Needs</h5>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Challenges</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Language barriers", "Limited access to trusted partners", "Financing constraints", "Import/logistics challenges", "Regulatory barriers", "Quality assurance concerns", "Limited market information", "Cultural/business practice differences", "Communication delays", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.challenges.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.challenges, option]
-                              : surveyForm.challenges.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, challenges: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {surveyForm.challenges.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.challenges_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, challenges_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Support Needed</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["B2B matchmaking", "Trade mission coordination", "Business networking events", "Investment linkages", "Policy advocacy", "Technical training", "Market intelligence", "Supplier verification", "Translation/interpreter support", "Regulatory guidance", "Access to financing opportunities", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.support_needed.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.support_needed, option]
-                              : surveyForm.support_needed.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, support_needed: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {surveyForm.support_needed.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.support_needed_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, support_needed_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-              </div>
-
-              <div className="border-b pb-4 mb-4" style={{ borderColor: palette.borderColor }}>
-                <h5 className="text-sm font-semibold mb-2" style={{ color: palette.textColor }}>Section 4: Future Collaboration Opportunities</h5>
-                <select
-                  value={surveyForm.future_interest}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, future_interest: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveSurvey}
+                  disabled={loading}
+                  className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
+                  style={{ backgroundColor: palette.primary }}
                 >
-                  <option value="">Select interest level</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                  <option value="Maybe">Maybe</option>
-                </select>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: palette.textColor }}>Interested Activities</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["Trade fairs", "Virtual B2B meetings", "Investor forums", "Site visits", "Product exhibitions", "Technical workshops", "Joint pilot projects", "Other"].map((option) => (
-                      <label key={option} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={surveyForm.interested_activities.includes(option)}
-                          onChange={(e) => {
-                            const newValue = e.target.checked
-                              ? [...surveyForm.interested_activities, option]
-                              : surveyForm.interested_activities.filter(item => item !== option);
-                            setSurveyForm({ ...surveyForm, interested_activities: newValue });
-                          }}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {surveyForm.interested_activities.includes("Other") && (
-                    <input
-                      type="text"
-                      placeholder="Please specify"
-                      value={surveyForm.interested_activities_other}
-                      onChange={(e) => setSurveyForm({ ...surveyForm, interested_activities_other: e.target.value })}
-                      className="mt-2 w-full rounded-lg border px-3 py-2 text-sm"
-                      style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                    />
-                  )}
-                </div>
-                <textarea
-                  placeholder="Additional Comments"
-                  value={surveyForm.additional_comments}
-                  onChange={(e) => setSurveyForm({ ...surveyForm, additional_comments: e.target.value })}
-                  className="w-full rounded-lg border px-3 py-2 text-sm"
-                  style={{ borderColor: palette.borderColor, backgroundColor: palette.surfaceMuted }}
-                  rows={3}
-                />
+                  {loading ? "Saving..." : "Update Survey Response"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingItem(null);
+                    setSurveyForm({});
+                  }}
+                  className="w-full rounded-lg border py-2 text-sm font-semibold"
+                  style={{ borderColor: palette.borderColor, color: palette.textColor }}
+                >
+                  Cancel Edit
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={handleSaveSurvey}
-                disabled={loading}
-                className="w-full rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
-                style={{ backgroundColor: palette.primary }}
-              >
-                {loading ? "Saving..." : "Update Survey Response"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingItem(null);
-                  setSurveyForm({
-                    company_name: "",
-                    contact_person: "",
-                    position: "",
-                    email: "",
-                    phone: "",
-                    nature_of_business: [],
-                    technologies: [],
-                    engages_chinese_partners: "",
-                    collaboration_types: [],
-                    engagement_duration: "",
-                    challenges: [],
-                    support_needed: [],
-                    future_interest: "",
-                    interested_activities: [],
-                    additional_comments: ""
-                  });
-                }}
-                className="w-full rounded-lg border py-2 text-sm font-semibold"
-                style={{ borderColor: palette.borderColor, color: palette.textColor }}
-              >
-                Cancel Edit
-              </button>
             </div>
           ) : (
             <div className="mt-4 overflow-x-auto">
@@ -2600,30 +2424,14 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                             type="button"
                             onClick={() => {
                               setEditingItem(response);
-                              setSurveyForm({
-                                company_name: response.company_name || "",
-                                contact_person: response.contact_person || "",
-                                position: response.position || "",
-                                email: response.email || "",
-                                phone: response.phone || "",
-                                nature_of_business: response.nature_of_business || [],
-                                technologies: response.technologies || [],
-                                engages_chinese_partners: response.engages_chinese_partners || "",
-                                collaboration_types: response.collaboration_types || [],
-                                engagement_duration: response.engagement_duration || "",
-                                challenges: response.challenges || [],
-                                support_needed: response.support_needed || [],
-                                future_interest: response.future_interest || "",
-                                interested_activities: response.interested_activities || [],
-                                additional_comments: response.additional_comments || "",
-                                nature_of_business_other: response.nature_of_business_other || "",
-                                technologies_other: response.technologies_other || "",
-                                collaboration_types_other: response.collaboration_types_other || "",
-                                challenges_other: response.challenges_other || "",
-                                support_needed_other: response.support_needed_other || "",
-                                interested_activities_other: response.interested_activities_other || "",
-                                ...(response.responses_jsonb || {})
-                              });
+                              // For dynamic survey, use responses_jsonb data
+                              const dynamicForm = {};
+                              if (response.responses_jsonb) {
+                                Object.entries(response.responses_jsonb).forEach(([key, value]) => {
+                                  dynamicForm[key] = value;
+                                });
+                              }
+                              setSurveyForm(dynamicForm);
                             }}
                             className="text-xs text-blue-600 hover:underline"
                           >

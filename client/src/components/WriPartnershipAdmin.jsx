@@ -300,19 +300,110 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
         setNotice(editingItem ? "Survey question updated" : "Survey question created");
         setSurveyQuestionForm({
           section_order: 1,
-          question_order: 1,
+          question_order: surveyQuestions.length + 1,
           question_text: "",
           question_type: "text",
           options: [],
           required: false
         });
         setEditingItem(null);
-        fetchSurveyQuestions();
+        await fetchSurveyQuestions();
+        
+        // Trigger settings update to refresh public page
+        await fetchWriSettings();
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || "Failed to save survey question");
       }
     } catch (error) {
+      console.error("Error saving survey question:", error);
       setError("Failed to save survey question");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMoveQuestionUp = async (question) => {
+    const currentIndex = surveyQuestions.findIndex(q => q.id === question.id);
+    if (currentIndex === 0) return; // Already at top
+
+    const previousQuestion = surveyQuestions[currentIndex - 1];
+    
+    // Swap question_order values
+    const newOrder = previousQuestion.question_order;
+    const previousOrder = question.question_order;
+
+    try {
+      await fetch(`${API_URL}/api/wri/admin/survey-questions/${question.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...question,
+          question_order: newOrder
+        })
+      });
+
+      await fetch(`${API_URL}/api/wri/admin/survey-questions/${previousQuestion.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...previousQuestion,
+          question_order: previousOrder
+        })
+      });
+
+      fetchSurveyQuestions();
+      setNotice("Question moved up");
+    } catch (error) {
+      setError("Failed to move question");
+    }
+  };
+
+  const handleMoveQuestionDown = async (question) => {
+    const currentIndex = surveyQuestions.findIndex(q => q.id === question.id);
+    if (currentIndex === surveyQuestions.length - 1) return; // Already at bottom
+
+    const nextQuestion = surveyQuestions[currentIndex + 1];
+    
+    // Swap question_order values
+    const newOrder = nextQuestion.question_order;
+    const nextOrder = question.question_order;
+
+    try {
+      await fetch(`${API_URL}/api/wri/admin/survey-questions/${question.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...question,
+          question_order: newOrder
+        })
+      });
+
+      await fetch(`${API_URL}/api/wri/admin/survey-questions/${nextQuestion.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...nextQuestion,
+          question_order: nextOrder
+        })
+      });
+
+      fetchSurveyQuestions();
+      setNotice("Question moved down");
+    } catch (error) {
+      setError("Failed to move question");
     }
   };
 
@@ -987,7 +1078,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
 
       <div className="flex flex-wrap gap-2 border-b pb-2" style={{ borderColor: palette.borderColor }}>
         {[
-          { id: "hero", label: "Hero", icon: "🏠" },
           { id: "real-hero", label: "Real Hero", icon: "⭐" },
           { id: "animation", label: "Animation", icon: "🎬" },
           { id: "support", label: "Support", icon: "❓" },
@@ -1023,10 +1113,6 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
           </button>
         ))}
       </div>
-
-      {activeSubTab === "hero" && (
-        <WriHeroAdminSimple token={token} palette={palette} setNotice={setNotice} setError={setError} />
-      )}
 
       {activeSubTab === "real-hero" && (
         <WriRealHeroAdmin token={token} palette={palette} setNotice={setNotice} setError={setError} />
@@ -2638,9 +2724,10 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <button
                   onClick={() => {
                     setEditingItem(null);
+                    const nextOrder = surveyQuestions.length > 0 ? Math.max(...surveyQuestions.map(q => q.question_order)) + 1 : 1;
                     setSurveyQuestionForm({
                       section_order: 1,
-                      question_order: 1,
+                      question_order: nextOrder,
                       question_text: "",
                       question_type: "text",
                       options: [],
@@ -2662,9 +2749,10 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                 <button
                   onClick={() => {
                     setEditingItem(null);
+                    const nextOrder = surveyQuestions.length > 0 ? Math.max(...surveyQuestions.map(q => q.question_order)) + 1 : 1;
                     setSurveyQuestionForm({
                       section_order: 1,
-                      question_order: 1,
+                      question_order: nextOrder,
                       question_text: "",
                       question_type: "text",
                       options: [],
@@ -2698,6 +2786,22 @@ const WriPartnershipAdmin = ({ token, palette, setNotice, setError }) => {
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <button
+                        onClick={() => handleMoveQuestionUp(question)}
+                        disabled={surveyQuestions.findIndex(q => q.id === question.id) === 0}
+                        className="rounded px-2 py-1 text-xs font-semibold"
+                        style={{ backgroundColor: palette.surfaceMuted, color: palette.textColor }}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        onClick={() => handleMoveQuestionDown(question)}
+                        disabled={surveyQuestions.findIndex(q => q.id === question.id) === surveyQuestions.length - 1}
+                        className="rounded px-2 py-1 text-xs font-semibold"
+                        style={{ backgroundColor: palette.surfaceMuted, color: palette.textColor }}
+                      >
+                        ↓
+                      </button>
                       <button
                         onClick={() => {
                           setEditingItem(question);

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import AnimatedPatternBackground from "../components/AnimatedPatternBackground.jsx";
+import ParticleBackground from "../components/ParticleBackground.jsx";
 import BrandLogo from "../components/BrandLogo.jsx";
 import SiteFooter from "../components/SiteFooter.jsx";
 import { useSiteSettings } from "../context/SiteSettingsContext.jsx";
@@ -232,6 +233,7 @@ const LandingPage = () => {
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: palette.pageBackground, color: palette.textColor }}>
       <AnimatedPatternBackground />
+      <ParticleBackground color={palette.primary} opacity={0.3} />
 
       <header className="relative z-10 border-b shadow-sm backdrop-blur-xl" style={{ borderColor: palette.borderColor, backgroundColor: palette.headerBackground }}>
         <div className={`mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 ${mobileHeaderClass} sm:justify-between sm:gap-4 sm:px-6 sm:py-4 lg:px-8 ${desktopClasses.headerPadding}`} style={desktopScaleStyle}>
